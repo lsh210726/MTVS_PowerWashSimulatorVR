@@ -51,16 +51,23 @@ public:
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")
 	class UTextRenderComponent* rightLog;
 
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UMoveComponent* moveComp;
+
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;
 
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	TArray<class UInputAction*> inputActions;
 
-private:
-	void Move(const FInputActionValue& value);
-	void Rotate(const FInputActionValue& value);
+	UPROPERTY(EditDefaultsOnly, Category="MySettings|MoveMent")
+	TSubclassOf<class ABallActor> myBall_bp;
+	
+	UPROPERTY(EditDefaultsOnly, Category="MySettings|MoveMent")
+	bool bIsTesting = true;
 
 	class APlayerController* pc;
+	class ABallActor* ball;
+
 
 };
