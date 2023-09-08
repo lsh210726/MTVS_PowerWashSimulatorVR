@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BuildingSystem.generated.h"
+#include "MyActorComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class POWERWASH_API UBuildingSystem : public UActorComponent
+class POWERWASH_API UMyActorComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UBuildingSystem();
+	UMyActorComponent();
 
 protected:
 	// Called when the game starts
@@ -24,22 +24,5 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
-UFUNCTION(BlueprintCallable)
-		void moveMesh();
-private:
-
-  UPROPERTY(EditAnywhere)
-    UStaticMesh* TemporaryMesh;
-
-    UPROPERTY(EditAnywhere)
-    UStaticMesh* PermanentMesh;
-
-    AStaticMeshActor* TemporaryActor;
-    
-    FVector HitLocation;
-    
-public:
-   void PerformLineTrace();
-   void ConfirmPlacement();
+		
 };
