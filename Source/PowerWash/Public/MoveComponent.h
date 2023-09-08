@@ -41,9 +41,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|MoveMent")
 	float myMass = 1;
 
+	//UPROPERTY(EditDefaultsOnly, Category="MySettings|MoveMent")
+	//float alpha = 0;
+
+
 private:
 	class AVRCharacter* player;
 	bool bIsShowLine = false;
+	TArray<FVector> linePositions;
 	
 	void Move(const struct FInputActionValue& value);
 	void Rotate(const struct FInputActionValue& value);
@@ -51,5 +56,5 @@ private:
 	void LeftTriggerUp();
 
 	void DrawTrajectory(FVector dir, float power, float mass);
-
+	void DrawBazierCurve();
 };

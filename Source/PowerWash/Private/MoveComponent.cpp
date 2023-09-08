@@ -9,6 +9,8 @@
 #include "MotionControllerComponent.h"
 #include "DrawDebugHelpers.h"
 #include "BallActor.h"
+#include <Components/CapsuleComponent.h>
+#include <../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraDataInterfaceArrayFunctionLibrary.h>
 
 // Sets default values for this component's properties
 UMoveComponent::UMoveComponent()
@@ -48,7 +50,11 @@ void UMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	if(bIsShowLine) DrawTrajectory(throwDirection, throwPower, myMass);
+	if(bIsShowLine) 
+	{
+		DrawTrajectory(throwDirection, throwPower, myMass);
+		//DrawBazierCurve();
+	}
 }
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
@@ -106,12 +112,25 @@ void UMoveComponent::LeftTriggerUp()
 		player->ball->meshComp->AddImpulse(relativeDir * throwPower);
 	}
 
+	float duration = 0.50f;
+	player->pc->PlayerCameraManager->StartCameraFade(0.0f, 1.0f, duration, FLinearColor::Black, true);
 
+	FTimerHandle moveHandle;
+	GetWorld()->GetTimerManager().SetTimer(moveHandle, FTimerDelegate::CreateLambda([&]()
+	{
+		//최종위치로 나를 이동시킨다
+		FVector targetLoc = linePositions[linePositions.Num() - 1];
+		targetLoc.Z += player->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+		player->SetActorLocation(targetLoc, true);
+	}), duration, false);
+
+	
 }
 
 void UMoveComponent::DrawTrajectory(FVector dir, float power, float mass)
 {
-	TArray<FVector> linePositions;
+	linePositions.Empty();
+
 	UWorld* world = GetWorld();
 	FVector startLoc = player->leftMotionController->GetComponentLocation();
 	FVector direction = player->leftMotionController->GetComponentTransform().TransformVector(dir);//월드 절대값 dir을 컨트롤러 상대값으로 변환
@@ -136,9 +155,43 @@ void UMoveComponent::DrawTrajectory(FVector dir, float power, float mass)
 		linePositions.Add(endLoc);
 	}
 
-	for (int i = 0; i < linePositions.Num() - 1; i++)
+	//for (int i = 0; i < linePositions.Num() - 1; i++)
+	//{
+	//	DrawDebugLine(world, linePositions[i], linePositions[i + 1], FColor::Red, false, 0, 0, 2);//각 지점들 사이사이에 선 그리기
+
+	//}
+	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(player->lineFx, FName("PointArray"), linePositions);
+}
+
+void UMoveComponent::DrawBazierCurve()
+{
+	FVector startLoc = player->leftMotionController->GetComponentLocation();//시작 위치
+	FVector relativeDir = player->leftMotionController->GetComponentTransform().TransformVector(throwDirection);//상대좌표로 변환
+	FHitResult hitInfo;
+
+	if (GetWorld()->LineTraceSingleByChannel(hitInfo, startLoc, startLoc + relativeDir * throwPower, ECC_Visibility))
 	{
-		DrawDebugLine(world, linePositions[i], linePositions[i + 1], FColor::Red, false, 0, 0, 2);//각 지점들 사이사이에 선 그리기
+		float heightDist = FMath::Abs(hitInfo.ImpactPoint.Z - player->leftMotionController->GetComponentLocation().Z);//임팩트 포인터의 높이 설정&절대값
+		FVector point1 = startLoc;//시작위치
+		FVector point2 = hitInfo.ImpactPoint + FVector::UpVector * heightDist *1.5f;
+		FVector point3 = hitInfo.ImpactPoint;
+		float alpha = 0;
+		linePositions.Empty();//배열 초기화
+
+		for (int32 i = 0; i < 11; ++i)
+		{
+			FVector lineStart = FMath::Lerp<FVector>(point1, point2, alpha);
+			FVector lineEnd = FMath::Lerp<FVector>(point2, point3, alpha);
+			FVector linePoint = FMath::Lerp<FVector>(lineStart, lineEnd, alpha);
+			alpha += 0.1f;//포문 돌릴때마다 알파값 조금씩 증가
+
+			linePositions.Add(linePoint);//만들어진 값 배열에 저장
+		}
+
+		for (int32 i = 0; i < linePositions.Num()-1; i++)
+		{
+			DrawDebugLine(GetWorld(), linePositions[i], linePositions[i + 1], FColor::Green, false, 0, 0, 2);
+		}
 	}
 }
 

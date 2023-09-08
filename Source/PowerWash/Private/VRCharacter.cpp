@@ -13,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MoveComponent.h"
 #include "BallActor.h"
+#include <../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h>
 
 // Sets default values
 AVRCharacter::AVRCharacter()
@@ -58,6 +59,9 @@ AVRCharacter::AVRCharacter()
 	rightLog->SetTextRenderColor(FColor(255, 255, 0, 255));
 	rightLog->SetHorizontalAlignment(EHTA_Center);
 	rightLog->SetVerticalAlignment(EVRTA_TextCenter);
+
+	lineFx = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Line Effect"));//텔레포트 위치까지 이어지는 선 나이아가라
+	lineFx->SetupAttachment(RootComponent);
 
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationPitch = true;
