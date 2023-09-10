@@ -11,6 +11,8 @@
 #include "BallActor.h"
 #include <Components/CapsuleComponent.h>
 #include <../Plugins/FX/Niagara/Source/Niagara/Classes/NiagaraDataInterfaceArrayFunctionLibrary.h>
+#include "FloorIndicatorActor.h"
+#include "NiagaraComponent.h"
 
 // Sets default values for this component's properties
 UMoveComponent::UMoveComponent()
@@ -41,6 +43,14 @@ void UMoveComponent::BeginPlay()
 		}
 	}));
 	
+	//텔레포트 링 생성
+	if(indicator_BP!=nullptr)
+	{
+		FActorSpawnParameters params;
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		indicatorActor = GetWorld()->SpawnActor<AFloorIndicatorActor>(indicator_BP, FVector::ZeroVector, FRotator::ZeroRotator, params);
+		indicatorActor->floorIndicator->SetVisibility(false);
+	}
 }
 
 
@@ -52,9 +62,12 @@ void UMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// ...
 	if(bIsShowLine) 
 	{
-		DrawTrajectory(throwDirection, throwPower, myMass);
+		//DrawTrajectory(throwDirection, throwPower, myMass);
 		//DrawBazierCurve();
 	}
+	//반사 벡터 그리기
+	//FVector shoot = FRotationMatrix(player->leftMotionController->GetComponentRotation()).GetUnitAxis(EAxis::X);
+	DrawReflectionVector(FVector::ForwardVector, 300);
 }
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
@@ -67,7 +80,7 @@ void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* en
 	enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Triggered, this, &UMoveComponent::Rotate);
 	enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Completed, this, &UMoveComponent::Rotate);
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UMoveComponent::LeftTriggerDown);
-	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UMoveComponent::LeftTriggerUp);
+	//enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UMoveComponent::LeftTriggerUp);
 }
 
 void UMoveComponent::Move(const FInputActionValue& value)
@@ -97,12 +110,16 @@ void UMoveComponent::Rotate(const FInputActionValue& value)
 
 void UMoveComponent::LeftTriggerDown()
 {
-	bIsShowLine = true;
+	//bIsShowLine = true;
+	player->ball->meshComp->SetSimulatePhysics(true);
+	player->ball->meshComp->SetEnableGravity(false);
+	FVector shootDir = player->leftMotionController->GetComponentTransform().TransformVector(FVector::ForwardVector);
+	player->ball->meshComp->AddImpulse(shootDir * 500);
 }
 
 void UMoveComponent::LeftTriggerUp()
 {
-	//bIsShowLine = false;
+	bIsShowLine = false;
 
 	if (player->ball != nullptr)
 	{
@@ -122,6 +139,16 @@ void UMoveComponent::LeftTriggerUp()
 		FVector targetLoc = linePositions[linePositions.Num() - 1];
 		targetLoc.Z += player->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 		player->SetActorLocation(targetLoc, true);
+
+		//트리거를 놓으면 라인의 배열 값을 초기화한다 > 선이 생성 안되게
+		TArray<FVector> tempArr = { FVector::ZeroVector };
+		UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(player->lineFx, FName("PointArray"), tempArr);
+
+		//텔레포트 링을 안보이게 한다
+		if (indicatorActor)
+		{
+			indicatorActor->floorIndicator->SetVisibility(false);
+		}
 	}), duration, false);
 
 	
@@ -161,6 +188,12 @@ void UMoveComponent::DrawTrajectory(FVector dir, float power, float mass)
 
 	//}
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(player->lineFx, FName("PointArray"), linePositions);
+	//바닥 링 표시
+	if (indicatorActor != nullptr)
+	{
+		indicatorActor->SetActorLocation(linePositions[linePositions.Num() - 1]);//선의 제일 끝부분에 인디케이터 위치
+		indicatorActor->floorIndicator->SetVisibility(true); //인디케이터 안보이게했던거 다시 보이게
+	}
 }
 
 void UMoveComponent::DrawBazierCurve()
@@ -192,6 +225,43 @@ void UMoveComponent::DrawBazierCurve()
 		{
 			DrawDebugLine(GetWorld(), linePositions[i], linePositions[i + 1], FColor::Green, false, 0, 0, 2);
 		}
+	}
+}
+
+void UMoveComponent::DrawReflectionVector(FVector dir, float entireDist)
+{
+	float remainedDist = entireDist;
+	FVector shootDir = player->leftMotionController->GetComponentTransform().TransformVector(dir);
+	FVector startLoc = player->leftMotionController->GetComponentLocation();
+	UWorld* world = GetWorld();
+	FHitResult hitInfo;
+	TArray<FVector> points;
+	points.Add(startLoc);
+
+	while (true)
+	{
+		if (remainedDist > 0 /*닿았을 떄 끝나는 지점일 경우 반사각 계산을 하며 안됨*/&& world->LineTraceSingleByChannel(hitInfo, startLoc /*시작점*/, startLoc + shootDir * remainedDist /*종료점*/, ECC_Visibility))
+		{
+			//부딛히면 반사각 계산, 반사각을 발사각으로 갱신
+			float projection = FVector::DotProduct/*내적*/(shootDir * -1, hitInfo.ImpactNormal);
+			startLoc = hitInfo.ImpactPoint;
+			FVector reflectionVec = shootDir + 2 * hitInfo.ImpactNormal * projection;
+			shootDir = reflectionVec; //새로계산된 반사각으로 갱신
+			remainedDist = remainedDist = FMath::Max(hitInfo.Distance,0/*혹시모르니까 최소값 설정*/); //남은 거리 갱신
+			points.Add(hitInfo.ImpactPoint);
+		}
+		else
+		{
+			//안부딛히면 계산안하기
+			FVector endLoc = startLoc + shootDir * remainedDist;
+			points.Add(endLoc);
+			break;
+		}
+	}
+
+	for (int32 i = 0; i < points.Num() - 1; i++)
+	{
+		DrawDebugLine(world, points[i], points[i + 1], FColor::Red, false, 0, 0, 2);
 	}
 }
 
