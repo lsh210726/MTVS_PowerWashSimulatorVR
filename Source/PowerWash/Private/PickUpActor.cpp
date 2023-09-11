@@ -43,6 +43,8 @@ void APickUpActor::Tick(float DeltaTime)
 void APickUpActor::Grabbed(USkeletalMeshComponent* handMesh)
 {
 	meshComp->SetSimulatePhysics(false);
-	AttachToComponent(handMesh, FAttachmentTransformRules::KeepWorldTransform);
+	//AttachToComponent(handMesh, FAttachmentTransformRules::KeepWorldTransform);
+	AttachToComponent(handMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale,FName("GrabPoint"));
+	//SetActorRelativeLocation(FVector(0, 0, 100));
 }
 

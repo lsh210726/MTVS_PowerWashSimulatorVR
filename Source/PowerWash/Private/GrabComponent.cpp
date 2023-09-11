@@ -46,27 +46,47 @@ void UGrabComponent::SetupPlayerInputComponent(UEnhancedInputComponent* enhanced
 
 void UGrabComponent::GrabObject()
 {
-	//line trace 방식
-	FHitResult hitInfo;
-	FVector startLoc = player->rightMotionController->GetComponentLocation(); 
-	FVector endLoc = startLoc + player->rightMotionController->GetUpVector()*-50.0f;
-	DrawDebugLine(GetWorld(), startLoc, endLoc, FColor::Red, false, 1, 0, 3.0f);
+#pragma region lineTrace Type
+//line trace 방식
+	
+	//FHitResult hitInfo;
+	//FVector startLoc = player->rightMotionController->GetComponentLocation(); 
+	//FVector endLoc = startLoc + player->rightMotionController->GetUpVector()*-50.0f;
+	//DrawDebugLine(GetWorld(), startLoc, endLoc, FColor::Red, false, 1, 0, 3.0f);
 
-	if (GetWorld()->LineTraceSingleByProfile(hitInfo, startLoc, endLoc, FName("PickUp")))
+	//if (GetWorld()->LineTraceSingleByProfile(hitInfo, startLoc, endLoc, FName("PickUp")))
+	//{
+	//	APickUpActor* pickObject = Cast<APickUpActor>(hitInfo.GetActor()); 
+	//	if (pickObject != nullptr)
+	//	{
+	//		pickObject->Grabbed(player->rightHand);
+	//	}
+	//	player->rightLog->SetText(FText::FromString(FString::Printf(TEXT("Grab Object : %s"), *hitInfo.GetActor()->GetName())));
+	//	UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetActor()->GetName());
+	//}
+	//else
+	//{
+	//	player->rightLog->SetText(FText::FromString(FString::Printf(TEXT("No Hit"))));
+	//	UE_LOG(LogTemp, Warning, TEXT("No Hit"));
+
+	//}
+#pragma endregion
+
+	//sweep 방식
+	FHitResult hitInfo;
+	FVector startLoc = player->rightHand->GetComponentLocation();
+
+	//DrawDebugLine(GetWorld(), startLoc, endLoc, FColor::Red, false, 1, 0, 3.0f);
+	DrawDebugSphere(GetWorld(), startLoc, 20, 12, FColor::Red, false, 1, 0, 0.1f);
+
+	if (GetWorld()->SweepSingleByProfile(hitInfo, startLoc, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(20)))//구체 만들고 충돌하기
 	{
-		APickUpActor* pickObject = Cast<APickUpActor>(hitInfo.GetActor()); 
-		if (pickObject != nullptr)
+		UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+
+		if (APickUpActor* pickObject = Cast<APickUpActor>(hitInfo.GetActor()))
 		{
 			pickObject->Grabbed(player->rightHand);
 		}
-		player->rightLog->SetText(FText::FromString(FString::Printf(TEXT("Grab Object : %s"), *hitInfo.GetActor()->GetName())));
-		UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetActor()->GetName());
-	}
-	else
-	{
-		player->rightLog->SetText(FText::FromString(FString::Printf(TEXT("No Hit"))));
-		UE_LOG(LogTemp, Warning, TEXT("No Hit"));
-
 	}
 }
 
