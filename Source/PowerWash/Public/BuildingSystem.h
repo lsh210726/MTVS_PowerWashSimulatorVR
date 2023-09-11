@@ -24,7 +24,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
+/*
 UFUNCTION(BlueprintCallable)
 		void moveMesh();
 private:
@@ -41,5 +41,5 @@ private:
     
 public:
    void PerformLineTrace();
-   void ConfirmPlacement();
+   void ConfirmPlacement();*/
 };
