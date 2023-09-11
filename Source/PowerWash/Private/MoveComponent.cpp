@@ -32,7 +32,7 @@ void UMoveComponent::BeginPlay()
 
 	// ...
 	player = GetOwner<AVRCharacter>();
-	//FTimerHandle massTimer;
+	FTimerHandle massTimer;
 	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([&]()
 	{
 		if (player->ball != nullptr)
@@ -62,12 +62,12 @@ void UMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// ...
 	if(bIsShowLine) 
 	{
-		//DrawTrajectory(throwDirection, throwPower, myMass);
+		DrawTrajectory(throwDirection, throwPower, myMass);
 		//DrawBazierCurve();
 	}
 	//반사 벡터 그리기
 	//FVector shoot = FRotationMatrix(player->leftMotionController->GetComponentRotation()).GetUnitAxis(EAxis::X);
-	DrawReflectionVector(FVector::ForwardVector, 300);
+	//DrawReflectionVector(FVector::ForwardVector, 300);
 }
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
@@ -75,12 +75,12 @@ void UMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions)
 {
-	enhancedInputComponent->BindAction(inputActions[0], ETriggerEvent::Triggered, this, &UMoveComponent::Move);
-	enhancedInputComponent->BindAction(inputActions[0], ETriggerEvent::Completed, this, &UMoveComponent::Move);
-	enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Triggered, this, &UMoveComponent::Rotate);
-	enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Completed, this, &UMoveComponent::Rotate);
-	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UMoveComponent::LeftTriggerDown);
-	//enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UMoveComponent::LeftTriggerUp);
+ 	enhancedInputComponent->BindAction(inputActions[0], ETriggerEvent::Triggered, this, &UMoveComponent::Move);
+ 	enhancedInputComponent->BindAction(inputActions[0], ETriggerEvent::Completed, this, &UMoveComponent::Move);
+ 	enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Triggered, this, &UMoveComponent::Rotate);
+ 	enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Completed, this, &UMoveComponent::Rotate);
+ 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UMoveComponent::LeftTriggerDown);
+	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UMoveComponent::LeftTriggerUp);
 }
 
 void UMoveComponent::Move(const FInputActionValue& value)
@@ -110,11 +110,14 @@ void UMoveComponent::Rotate(const FInputActionValue& value)
 
 void UMoveComponent::LeftTriggerDown()
 {
-	//bIsShowLine = true;
-	player->ball->meshComp->SetSimulatePhysics(true);
-	player->ball->meshComp->SetEnableGravity(false);
-	FVector shootDir = player->leftMotionController->GetComponentTransform().TransformVector(FVector::ForwardVector);
-	player->ball->meshComp->AddImpulse(shootDir * 500);
+	bIsShowLine = true;
+	if (player->ball != nullptr)
+	{
+		player->ball->meshComp->SetSimulatePhysics(true);
+		player->ball->meshComp->SetEnableGravity(false);
+		FVector shootDir = player->leftMotionController->GetComponentTransform().TransformVector(FVector::ForwardVector);
+		player->ball->meshComp->AddImpulse(shootDir * 500);
+	}
 }
 
 void UMoveComponent::LeftTriggerUp()
