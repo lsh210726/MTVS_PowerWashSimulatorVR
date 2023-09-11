@@ -23,6 +23,10 @@
 				"Android",
 				"HoloLens"
 			]
+		},
+		{
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
