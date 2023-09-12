@@ -89,6 +89,9 @@ void UGrabComponent::GrabObject()
 	//}
 #pragma endregion
 
+#pragma region sweepGrab
+
+
 	//sweep ¹æ½Ä
 	//FHitResult hitInfo;
 	//FVector startLoc = player->rightHand->GetComponentLocation();
@@ -105,8 +108,9 @@ void UGrabComponent::GrabObject()
 	//		pickObject->Grabbed(player->rightHand);
 	//	}
 	//}
+#pragma endregion
 
-	//overlap
+	//overlapGrab
 	TArray<FOverlapResult> hitInfos;
 	FVector startLoc = player->leftHand->GetComponentLocation();
 	if (GetWorld()->OverlapMultiByProfile(hitInfos, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(30)))

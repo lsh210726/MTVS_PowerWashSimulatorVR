@@ -26,12 +26,22 @@ AWaterGunActor::AWaterGunActor()
 void AWaterGunActor::BeginPlay()
 {
 	Super::BeginPlay();
-	player = GetOwner<AVRCharacter>();
 	//owner를 설정해줘야 한다
 	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
 	{
-		AttachToComponent(player->rightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
+
 	});
+
+	player = Cast<AVRCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
+	if (player)
+	{
+		if (player->rightHand)
+		{
+			AttachToComponent(player->rightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
+		}
+	}
+
 
 }
 
