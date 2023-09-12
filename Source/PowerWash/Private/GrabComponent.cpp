@@ -8,6 +8,7 @@
 #include "MotionControllerComponent.h"
 #include "PickUpActor.h"
 #include <Components/TextRenderComponent.h>
+#include <Components/BoxComponent.h>
 
 // Sets default values for this component's properties
 UGrabComponent::UGrabComponent()
@@ -36,16 +37,32 @@ void UGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	if (grabbedObject != nullptr)
+	{
+		deltaLoc = player->rightMotionController->GetComponentLocation() - prevLoc;//위치변화값
+		prevLoc = player->rightMotionController->GetComponentLocation();//이전위치값 갱신
+
+		deltaRot = player->rightMotionController->GetComponentQuat() - prevRot.Inverse();
+		prevRot = player->rightMotionController->GetComponentQuat();
+	}
 }
 
 void UGrabComponent::SetupPlayerInputComponent(UEnhancedInputComponent* enhancedInputComponent, TArray<UInputAction*> inputActions)
 {
 	enhancedInputComponent->BindAction(inputActions[3], ETriggerEvent::Started, this, &UGrabComponent::GrabObject);
+	enhancedInputComponent->BindAction(inputActions[3], ETriggerEvent::Completed, this, &UGrabComponent::ReleaseObject);
+	enhancedInputComponent->BindAction(inputActions[4], ETriggerEvent::Triggered, this, &UGrabComponent::RightHandMove);
 
 }
 
 void UGrabComponent::GrabObject()
 {
+	if (grabbedObject != nullptr)
+	{
+		return;
+	}
+
+
 #pragma region lineTrace Type
 //line trace 방식
 	
@@ -73,20 +90,65 @@ void UGrabComponent::GrabObject()
 #pragma endregion
 
 	//sweep 방식
-	FHitResult hitInfo;
+	//FHitResult hitInfo;
+	//FVector startLoc = player->rightHand->GetComponentLocation();
+
+	////DrawDebugLine(GetWorld(), startLoc, endLoc, FColor::Red, false, 1, 0, 3.0f);
+	//DrawDebugSphere(GetWorld(), startLoc, 20, 12, FColor::Red, false, 1, 0, 0.1f);
+
+	//if (GetWorld()->SweepSingleByProfile(hitInfo, startLoc, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(20)))//구체 만들고 충돌하기
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+
+	//	if (APickUpActor* pickObject = Cast<APickUpActor>(hitInfo.GetActor()))
+	//	{
+	//		pickObject->Grabbed(player->rightHand);
+	//	}
+	//}
+
+	//overlap
+	TArray<FOverlapResult> hitInfos;
 	FVector startLoc = player->rightHand->GetComponentLocation();
-
-	//DrawDebugLine(GetWorld(), startLoc, endLoc, FColor::Red, false, 1, 0, 3.0f);
-	DrawDebugSphere(GetWorld(), startLoc, 20, 12, FColor::Red, false, 1, 0, 0.1f);
-
-	if (GetWorld()->SweepSingleByProfile(hitInfo, startLoc, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(20)))//구체 만들고 충돌하기
+	if (GetWorld()->OverlapMultiByProfile(hitInfos, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(30)))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
-
-		if (APickUpActor* pickObject = Cast<APickUpActor>(hitInfo.GetActor()))
+		for (const FOverlapResult& hitInfo : hitInfos)
 		{
-			pickObject->Grabbed(player->rightHand);
+			if (APickUpActor* pickObj = Cast<APickUpActor>(hitInfo.GetActor()))
+			{
+				pickObj->Grabbed(player->rightHand);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Grab!"));
+				grabbedObject = pickObj;
+				break;//만약 가장 가까운 것 하나만 잡고 싶은 경우 여기에 break을 걸 것
+			}
+			UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+
 		}
+
 	}
+	DrawDebugSphere(GetWorld(), startLoc, 30, 12, FColor::Red, false, 1, 0, 0.1f);
+}
+
+void UGrabComponent::ReleaseObject()
+{
+	if(grabbedObject!=nullptr)
+	{
+		//물체를 손에서 분리하고 물리 능력을 활성화한다
+		grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
+		grabbedObject->boxComp->SetSimulatePhysics(true);
+
+		//물체의 던지는 방향에 따른 힘(선형, 회전력)을 가한다
+		if (!deltaLoc.IsNearlyZero())
+		{
+			grabbedObject->boxComp->AddImpulse(deltaLoc.GetSafeNormal() * throwPower);
+			grabbedObject->boxComp->AddTorqueInRadians(deltaRot.GetRotationAxis() * rotSpeed);
+		}
+		grabbedObject = nullptr;
+	}
+}
+
+void UGrabComponent::RightHandMove(const struct FInputActionValue& value)
+{
+	FVector direction = value.Get<FVector>();
+	player->rightMotionController->SetRelativeLocation(player->rightMotionController->GetRelativeLocation() + direction.GetSafeNormal());
 }
 

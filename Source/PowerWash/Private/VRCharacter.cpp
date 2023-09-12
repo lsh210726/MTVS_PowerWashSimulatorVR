@@ -85,7 +85,7 @@ void AVRCharacter::BeginPlay()
 	rightLog->SetText(FText::FromString("Right Log..."));
 
 	// 머리 장비 기준점 설정
-	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Stage);
+	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
 
 	pc = GetController<APlayerController>();
 

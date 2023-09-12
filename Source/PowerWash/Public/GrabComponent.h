@@ -25,7 +25,21 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions);
 
+	UPROPERTY(EditDefaultsOnly, Category=MySettings)
+	float throwPower = 1.0f;
+	UPROPERTY(EditDefaultsOnly, Category=MySettings)
+	float rotSpeed = 100.0f;
+
 private:
 	class AVRCharacter* player;
+	class APickUpActor* grabbedObject;
+
+	FVector prevLoc;
+	FVector deltaLoc;
+	FQuat prevRot;
+	FQuat deltaRot;
+
 	void GrabObject();
+	void ReleaseObject();
+	void RightHandMove(const struct FInputActionValue& value);
 };
