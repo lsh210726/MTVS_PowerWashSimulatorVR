@@ -4,6 +4,9 @@
 #include "DecalCompoenent.h"
 #include "Camera/PlayerCameraManager.h"
 #include <Kismet/GameplayStatics.h>
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "VRCharacter.h"
 
 UENUM(BlueprintType)
 enum class NozzleMode : uint8
@@ -29,6 +32,8 @@ void UDecalCompoenent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+	player = GetOwner<AVRCharacter>();
+	if (player == nullptr) return;
 	
 }
 
@@ -37,14 +42,13 @@ void UDecalCompoenent::BeginPlay()
 void UDecalCompoenent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (player == nullptr) return;
+
+	/*pc = Cast<APlayerController>(player->GetController());
+	if (pc == nullptr) return;*/
 
 	//임시로 카메라 매니저에서 ray
-	AActor* Owner = GetOwner();
-	if(Owner==nullptr) return;
-
-	pc = Cast<APlayerController>(Owner->GetInstigatorController());
-
-	if (pc == nullptr) return;
+	
 
 	//APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
 	//if (CameraManager)
@@ -79,7 +83,20 @@ void UDecalCompoenent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	//}
 
 }
+void UDecalCompoenent::SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions)
+{
+	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UDecalCompoenent::LeftTriggerDown);
+	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UDecalCompoenent::LeftTriggerUp);
+}
+void UDecalCompoenent::LeftTriggerDown()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("LeftTriggerDown")), true, FVector2D(1, 1));
+}
 
+void UDecalCompoenent::LeftTriggerUp()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("LeftTriggerUp")), true, FVector2D(1, 1));
+}
 void UDecalCompoenent::DoPainting()
 {
 
