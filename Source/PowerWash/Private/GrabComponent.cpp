@@ -39,11 +39,11 @@ void UGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	// ...
 	if (grabbedObject != nullptr)
 	{
-		deltaLoc = player->rightMotionController->GetComponentLocation() - prevLoc;//위치변화값
-		prevLoc = player->rightMotionController->GetComponentLocation();//이전위치값 갱신
+		deltaLoc = player->leftMotionController->GetComponentLocation() - prevLoc;//위치변화값
+		prevLoc = player->leftMotionController->GetComponentLocation();//이전위치값 갱신
 
-		deltaRot = player->rightMotionController->GetComponentQuat() - prevRot.Inverse();
-		prevRot = player->rightMotionController->GetComponentQuat();
+		deltaRot = player->leftMotionController->GetComponentQuat() - prevRot.Inverse();
+		prevRot = player->leftMotionController->GetComponentQuat();
 	}
 }
 
@@ -51,7 +51,7 @@ void UGrabComponent::SetupPlayerInputComponent(UEnhancedInputComponent* enhanced
 {
 	enhancedInputComponent->BindAction(inputActions[3], ETriggerEvent::Started, this, &UGrabComponent::GrabObject);
 	enhancedInputComponent->BindAction(inputActions[3], ETriggerEvent::Completed, this, &UGrabComponent::ReleaseObject);
-	enhancedInputComponent->BindAction(inputActions[4], ETriggerEvent::Triggered, this, &UGrabComponent::RightHandMove);
+	enhancedInputComponent->BindAction(inputActions[4], ETriggerEvent::Triggered, this, &UGrabComponent::leftHandMove);
 
 }
 
@@ -108,14 +108,14 @@ void UGrabComponent::GrabObject()
 
 	//overlap
 	TArray<FOverlapResult> hitInfos;
-	FVector startLoc = player->rightHand->GetComponentLocation();
+	FVector startLoc = player->leftHand->GetComponentLocation();
 	if (GetWorld()->OverlapMultiByProfile(hitInfos, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(30)))
 	{
 		for (const FOverlapResult& hitInfo : hitInfos)
 		{
 			if (APickUpActor* pickObj = Cast<APickUpActor>(hitInfo.GetActor()))
 			{
-				pickObj->Grabbed(player->rightHand);
+				pickObj->Grabbed(player->leftHand);
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Grab!"));
 				grabbedObject = pickObj;
 				break;//만약 가장 가까운 것 하나만 잡고 싶은 경우 여기에 break을 걸 것
@@ -146,9 +146,9 @@ void UGrabComponent::ReleaseObject()
 	}
 }
 
-void UGrabComponent::RightHandMove(const struct FInputActionValue& value)
+void UGrabComponent::leftHandMove(const struct FInputActionValue& value)
 {
 	FVector direction = value.Get<FVector>();
-	player->rightMotionController->SetRelativeLocation(player->rightMotionController->GetRelativeLocation() + direction.GetSafeNormal());
+	player->leftMotionController->SetRelativeLocation(player->leftMotionController->GetRelativeLocation() + direction.GetSafeNormal());
 }
 

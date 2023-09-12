@@ -41,5 +41,5 @@ private:
 
 	void GrabObject();
 	void ReleaseObject();
-	void RightHandMove(const struct FInputActionValue& value);
+	void leftHandMove(const struct FInputActionValue& value);
 };

@@ -53,8 +53,8 @@ private:
 	
 	void Move(const struct FInputActionValue& value);
 	void Rotate(const struct FInputActionValue& value);
-	void LeftTriggerDown();
-	void LeftTriggerUp();
+	void RighttTriggerDown();
+	void RightTriggerUp();
 
 	void DrawTrajectory(FVector dir, float power, float mass);
 	void DrawBazierCurve();

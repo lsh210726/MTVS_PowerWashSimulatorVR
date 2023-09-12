@@ -79,8 +79,8 @@ void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* en
  	enhancedInputComponent->BindAction(inputActions[0], ETriggerEvent::Completed, this, &UMoveComponent::Move);
  	enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Triggered, this, &UMoveComponent::Rotate);
  	enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Completed, this, &UMoveComponent::Rotate);
- 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UMoveComponent::LeftTriggerDown);
-	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UMoveComponent::LeftTriggerUp);
+ 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UMoveComponent::RighttTriggerDown);
+	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UMoveComponent::RightTriggerUp);
 }
 
 void UMoveComponent::Move(const FInputActionValue& value)
@@ -108,7 +108,7 @@ void UMoveComponent::Rotate(const FInputActionValue& value)
 	}
 }
 
-void UMoveComponent::LeftTriggerDown()
+void UMoveComponent::RighttTriggerDown()
 {
 	bIsShowLine = true;
 	if (player->ball != nullptr)
@@ -120,7 +120,7 @@ void UMoveComponent::LeftTriggerDown()
 	}
 }
 
-void UMoveComponent::LeftTriggerUp()
+void UMoveComponent::RightTriggerUp()
 {
 	bIsShowLine = false;
 
