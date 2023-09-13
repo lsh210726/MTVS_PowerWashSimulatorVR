@@ -24,5 +24,22 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+/*
+UFUNCTION(BlueprintCallable)
+		void moveMesh();
+private:
+
+  UPROPERTY(EditAnywhere)
+    UStaticMesh* TemporaryMesh;
+
+    UPROPERTY(EditAnywhere)
+    UStaticMesh* PermanentMesh;
+
+    AStaticMeshActor* TemporaryActor;
+    
+    FVector HitLocation;
+    
+public:
+   void PerformLineTrace();
+   void ConfirmPlacement();*/
 };
