@@ -54,6 +54,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class UMoveComponent* moveComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UNiagaraComponent* lineFx;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UGrabComponent* grabComp;
+
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;
 
@@ -69,5 +75,26 @@ public:
 	class APlayerController* pc;
 	class ABallActor* ball;
 
+public:
+// LMH Decal component Ãß°¡
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MySettings|Components")
+	class UDecalCompoenent* decalComp;
 
+private:
+	void RightTriggerDown();
+	void RightTriggerUp();
+	void RightTriggerValue(const struct FInputActionValue& value);
+	void RightGripDown();
+	void RightGripUp();
+	void RightThumbstickDown();
+	void RightThumbstickUp();
+	void RightThumbstickTouch();
+	void RightThumbstickAxis(const struct FInputActionValue& value);
+	void RightADown();
+	void RightAUP();
+	void RightATouch();
+	void RightBDown();
+	void RightBUp();
+	void RightBTouch();
+	
 };

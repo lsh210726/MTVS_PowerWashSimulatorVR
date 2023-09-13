@@ -41,15 +41,22 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|MoveMent")
 	float myMass = 1;
 
+	UPROPERTY(EditDefaultsOnly, Category="MySettings|MoveMent")
+	TSubclassOf<class AFloorIndicatorActor> indicator_BP;//생성할 인디케이터 액터
+
+
 private:
 	class AVRCharacter* player;
 	bool bIsShowLine = false;
+	TArray<FVector> linePositions;
+	class AFloorIndicatorActor* indicatorActor; //생성한 인디케이터 액터
 	
 	void Move(const struct FInputActionValue& value);
 	void Rotate(const struct FInputActionValue& value);
-	void LeftTriggerDown();
-	void LeftTriggerUp();
+	void RighttTriggerDown();
+	void RightTriggerUp();
 
 	void DrawTrajectory(FVector dir, float power, float mass);
-
+	void DrawBazierCurve();
+	void DrawReflectionVector(FVector dir, float entireDist);
 };
