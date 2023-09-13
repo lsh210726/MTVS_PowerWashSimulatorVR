@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "HandAnimInstance.h"
 #include "VRCharacter.generated.h"
 
 UCLASS()
@@ -60,6 +61,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class UGrabComponent* grabComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UHandAnimComponent* handAnimComp;
+
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;
 
@@ -74,6 +78,8 @@ public:
 
 	class APlayerController* pc;
 	class ABallActor* ball;
+	class UHandAnimInstance* leftHandAnim;
+	class UHandAnimInstance* rightHandAnim;
 
 private:
 	void RightTriggerDown();

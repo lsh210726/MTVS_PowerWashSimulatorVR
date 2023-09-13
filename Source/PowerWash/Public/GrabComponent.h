@@ -29,6 +29,8 @@ public:
 	float throwPower = 1.0f;
 	UPROPERTY(EditDefaultsOnly, Category=MySettings)
 	float rotSpeed = 100.0f;
+	UPROPERTY(EditDefaultsOnly, Category=MySettings)
+	class UHapticFeedbackEffect_Base* grab_Haptic;//물체 잡으면 진동
 
 private:
 	class AVRCharacter* player;
