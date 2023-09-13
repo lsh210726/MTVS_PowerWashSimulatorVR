@@ -52,7 +52,6 @@ void UGrabComponent::SetupPlayerInputComponent(UEnhancedInputComponent* enhanced
 	enhancedInputComponent->BindAction(inputActions[3], ETriggerEvent::Started, this, &UGrabComponent::GrabObject);
 	enhancedInputComponent->BindAction(inputActions[3], ETriggerEvent::Completed, this, &UGrabComponent::ReleaseObject);
 	enhancedInputComponent->BindAction(inputActions[4], ETriggerEvent::Triggered, this, &UGrabComponent::leftHandMove);
-
 }
 
 void UGrabComponent::GrabObject()

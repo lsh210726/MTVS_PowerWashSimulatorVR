@@ -81,6 +81,11 @@ public:
 	class UHandAnimInstance* leftHandAnim;
 	class UHandAnimInstance* rightHandAnim;
 
+public:
+// LMH Decal component Ãß°¡
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MySettings|Components")
+	class UDecalCompoenent* decalComp;
+
 private:
 	void RightTriggerDown();
 	void RightTriggerUp();
@@ -97,5 +102,5 @@ private:
 	void RightBDown();
 	void RightBUp();
 	void RightBTouch();
-
+	
 };
