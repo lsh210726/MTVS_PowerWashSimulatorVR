@@ -119,11 +119,12 @@ void UGrabComponent::GrabObject()
 			if (APickUpActor* pickObj = Cast<APickUpActor>(hitInfo.GetActor()))
 			{
 				pickObj->Grabbed(player->leftHand);
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Grab!"));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Grab!"));
 				grabbedObject = pickObj;
+				player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
 				break;//만약 가장 가까운 것 하나만 잡고 싶은 경우 여기에 break을 걸 것
 			}
-			UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
 
 		}
 
