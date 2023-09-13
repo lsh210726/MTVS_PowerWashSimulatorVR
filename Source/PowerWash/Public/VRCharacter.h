@@ -92,4 +92,8 @@ private:
 	void RightBUp();
 	void RightBTouch();
 
+public:
+	// LMH Decal component Ãß°¡
+	UPROPERTY(EditDefaultsOnly, Category = "LMH|Components")
+	class UDecalCompoenent* decalComp;
 };

@@ -15,6 +15,8 @@
 #include "BallActor.h"
 #include <../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h>
 #include "GrabComponent.h"
+#include "DecalCompoenent.h"
+#include "Components/DecalComponent.h"
 
 
 // Sets default values
@@ -73,6 +75,9 @@ AVRCharacter::AVRCharacter()
 	//컴포넌트 패턴
 	moveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("Move Component"));
 	grabComp = CreateDefaultSubobject<UGrabComponent>(TEXT("Grab Component"));
+
+	//LMH decal component 추가
+	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
 }
 
 // Called when the game starts or when spawned
@@ -146,7 +151,9 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		//enhancedInputComponent->BindAction(inputActions[8], ETriggerEvent::Completed, this, &AVRCharacter::RightBUp);
 		//enhancedInputComponent->BindAction(inputActions[9], ETriggerEvent::Started, this, &AVRCharacter::RightBTouch);
 #pragma endregion inputTest
-	
+
+		//LMH Decal component 추가
+		decalComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 	}
 }
 
