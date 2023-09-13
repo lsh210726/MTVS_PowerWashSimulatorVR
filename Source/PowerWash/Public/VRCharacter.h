@@ -75,6 +75,11 @@ public:
 	class APlayerController* pc;
 	class ABallActor* ball;
 
+public:
+// LMH Decal component 추가
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MySettings|Components")
+	class UDecalCompoenent* decalComp;
+
 private:
 	void RightTriggerDown();
 	void RightTriggerUp();
@@ -91,9 +96,5 @@ private:
 	void RightBDown();
 	void RightBUp();
 	void RightBTouch();
-
-public:
-	// LMH Decal component 추가
-	UPROPERTY(EditDefaultsOnly, Category = "LMH|Components")
-	class UDecalCompoenent* decalComp;
+	
 };

@@ -8,13 +8,12 @@
 #include "EnhancedInputComponent.h"
 #include "VRCharacter.h"
 
-UENUM(BlueprintType)
-enum class NozzleMode : uint8
-{
-	/*Value1 UMETA(DisplayName = "Value 1"),
-	Value2 UMETA(DisplayName = "Value 2"),*/
-	Value3 UMETA(DisplayName = "Value 3")
-};
+//enum class NozzleMode : uint8
+//{
+//	/*Value1 UMETA(DisplayName = "Value 1"),
+//	Value2 UMETA(DisplayName = "Value 2"),*/
+//	Value3 UMETA(DisplayName = "Value 3")
+//};
 // Sets default values for this component's properties
 UDecalCompoenent::UDecalCompoenent()
 {

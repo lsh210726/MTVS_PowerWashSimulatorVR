@@ -78,6 +78,18 @@ AVRCharacter::AVRCharacter()
 
 	//LMH decal component Ãß°¡
 	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
+
+	//ConstructorHelpers::FObjectFinder<UInputMappingContext> tempIMC(TEXT(""));
+	//if (tempIMC.Succeeded())
+	//{
+	//	imc_VRmap = tempIMC.Object;
+	//}
+
+	//ConstructorHelpers::FObjectFinder<UInputAction> tempIA_Move(TEXT("/Script/EnhancedInput.InputAction'/Game/ThirdPerson/Input/Actions/IA_Move.IA_Move'"));
+	//if (tempIA_Move.Succeeded())
+	//{
+	//	MoveAction = tempIA_Move.Object;
+	//}
 }
 
 // Called when the game starts or when spawned
