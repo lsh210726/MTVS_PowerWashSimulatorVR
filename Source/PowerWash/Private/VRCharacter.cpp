@@ -18,6 +18,8 @@
 #include "HandAnimComponent.h"
 #include "DecalCompoenent.h"
 #include "Components/DecalComponent.h"
+#include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
+#include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h>
 
 
 // Sets default values
@@ -81,17 +83,46 @@ AVRCharacter::AVRCharacter()
 	//LMH decal component Ãß°¡
 	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
 
-	//ConstructorHelpers::FObjectFinder<UInputMappingContext> tempIMC(TEXT(""));
-	//if (tempIMC.Succeeded())
-	//{
-	//	imc_VRmap = tempIMC.Object;
-	//}
-
-	//ConstructorHelpers::FObjectFinder<UInputAction> tempIA_Move(TEXT("/Script/EnhancedInput.InputAction'/Game/ThirdPerson/Input/Actions/IA_Move.IA_Move'"));
-	//if (tempIA_Move.Succeeded())
-	//{
-	//	MoveAction = tempIA_Move.Object;
-	//}
+	ConstructorHelpers::FObjectFinder<UInputMappingContext> tempIMC(TEXT("/Game/LSH_WorkSpace/Inputs/IMC_VRInput.IMC_VRInput"));
+	if (tempIMC.Succeeded())
+	{
+		imc_VRmap = tempIMC.Object;
+	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_Move(TEXT("/Game/LSH_WorkSpace/Inputs/IA_PlayerMove.IA_PlayerMove"));
+	if (tempIA_Move.Succeeded())
+	{
+		inputActions.Add(tempIA_Move.Object);
+	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_Look(TEXT("/Game/LSH_WorkSpace/Inputs/IA_PlayerRotation.IA_PlayerRotation"));
+	if (tempIA_Look.Succeeded())
+	{
+		inputActions.Add(tempIA_Look.Object);
+	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RT(TEXT("/Game/LSH_WorkSpace/Inputs/IA_RightTrigger.IA_RightTrigger"));
+	if (tempIA_RT.Succeeded())
+	{
+		inputActions.Add(tempIA_RT.Object);
+	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_LG(TEXT("/Game/LSH_WorkSpace/Inputs/IA_LeftGrip.IA_LeftGrip"));
+	if (tempIA_LG.Succeeded())
+	{
+		inputActions.Add(tempIA_LG.Object);
+	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RHM(TEXT("/Game/LSH_WorkSpace/Inputs/IA_RightHandMove.IA_RightHandMove"));
+	if (tempIA_RHM.Succeeded())
+	{
+		inputActions.Add(tempIA_RHM.Object);
+	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RTV(TEXT("/Game/LSH_WorkSpace/Inputs/IA_RightTrigger_value.IA_RightTrigger_value"));
+	if (tempIA_RTV.Succeeded())
+	{
+		inputActions.Add(tempIA_RTV.Object);
+	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_LGV(TEXT("/Game/LSH_WorkSpace/Inputs/IA_LeftGrip_value.IA_LeftGrip_value"));
+	if (tempIA_LGV.Succeeded())
+	{
+		inputActions.Add(tempIA_LGV.Object);
+	}
 }
 
 // Called when the game starts or when spawned
