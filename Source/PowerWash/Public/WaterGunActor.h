@@ -32,4 +32,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
 	class USkeletalMeshComponent* meshComp;
 
+
 };

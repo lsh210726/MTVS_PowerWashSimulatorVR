@@ -5,6 +5,8 @@
 #include <Components/BoxComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include <Components/SkeletalMeshComponent.h>
+#include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h>
+#include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include "VRCharacter.h"
 
 // Sets default values
@@ -51,4 +53,6 @@ void AWaterGunActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+
 
