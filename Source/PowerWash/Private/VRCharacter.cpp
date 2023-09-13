@@ -13,6 +13,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MoveComponent.h"
 #include "BallActor.h"
+#include <../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h>
+#include "GrabComponent.h"
+#include "HandAnimComponent.h"
+#include "DecalCompoenent.h"
+#include "Components/DecalComponent.h"
+
 
 // Sets default values
 AVRCharacter::AVRCharacter()
@@ -66,6 +72,24 @@ AVRCharacter::AVRCharacter()
 
 	//컴포넌트 패턴
 	moveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("Move Component"));
+	grabComp = CreateDefaultSubobject<UGrabComponent>(TEXT("Grab Component"));
+	handAnimComp = CreateDefaultSubobject<UHandAnimComponent>(TEXT("Hand Anim Component"));
+
+	//LMH decal component 추가
+	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
+
+	//ConstructorHelpers::FObjectFinder<UInputMappingContext> tempIMC(TEXT(""));
+	//if (tempIMC.Succeeded())
+	//{
+	//	imc_VRmap = tempIMC.Object;
+	//}
+
+	//ConstructorHelpers::FObjectFinder<UInputAction> tempIA_Move(TEXT("/Script/EnhancedInput.InputAction'/Game/ThirdPerson/Input/Actions/IA_Move.IA_Move'"));
+	//if (tempIA_Move.Succeeded())
+	//{
+	//	MoveAction = tempIA_Move.Object;
+	//}
+
 }
 
 // Called when the game starts or when spawned
@@ -101,6 +125,12 @@ void AVRCharacter::BeginPlay()
 		ball->meshComp->SetSimulatePhysics(false);
 		ball->AttachToComponent(leftMotionController, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	}
+
+	//양 손의 애니메이션 인스턴스 가져오기
+	leftHandAnim = Cast<UHandAnimInstance>(leftHand->GetAnimInstance());
+	rightHandAnim = Cast<UHandAnimInstance>(rightHand->GetAnimInstance());
+
+	if (leftHandAnim != nullptr) leftHandAnim->isLeft = true;
 }
 
 // Called every frame
@@ -119,6 +149,8 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	if (enhancedInputComponent != nullptr)
 	{
 		moveComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
+		grabComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
+		handAnimComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 
 	}
 }

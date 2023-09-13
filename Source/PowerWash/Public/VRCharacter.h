@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "HandAnimInstance.h"
 #include "VRCharacter.generated.h"
 
 UCLASS()
@@ -54,6 +55,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class UMoveComponent* moveComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UNiagaraComponent* lineFx;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UGrabComponent* grabComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UHandAnimComponent* handAnimComp;
+
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;
 
@@ -68,6 +78,29 @@ public:
 
 	class APlayerController* pc;
 	class ABallActor* ball;
+	class UHandAnimInstance* leftHandAnim;
+	class UHandAnimInstance* rightHandAnim;
 
+public:
+// LMH Decal component Ãß°¡
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MySettings|Components")
+	class UDecalCompoenent* decalComp;
 
+private:
+	void RightTriggerDown();
+	void RightTriggerUp();
+	void RightTriggerValue(const struct FInputActionValue& value);
+	void RightGripDown();
+	void RightGripUp();
+	void RightThumbstickDown();
+	void RightThumbstickUp();
+	void RightThumbstickTouch();
+	void RightThumbstickAxis(const struct FInputActionValue& value);
+	void RightADown();
+	void RightAUP();
+	void RightATouch();
+	void RightBDown();
+	void RightBUp();
+	void RightBTouch();
+	
 };
