@@ -6,7 +6,13 @@
 #include "Components/ActorComponent.h"
 #include "DecalCompoenent.generated.h"
 
-
+UENUM(BlueprintType)
+enum class EPaintColor : uint8
+{
+    Red,
+    Yellow,
+    Green
+};
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class POWERWASH_API UDecalCompoenent : public UActorComponent
 {
@@ -28,13 +34,33 @@ public:
 	bool IsPainting = true; //얼룩 생성 모드 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|Mode")
 	bool IsDrawing=false; //호스 누르기/떼기 
+	
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|Material")
+	class UMaterialInstance* MI_Color;*/
 
+	UPROPERTY()
+	TArray<class UMaterialInstance*> MI_Reds;
+
+	UPROPERTY()
+	TArray<class UMaterialInstance*> MI_Yellows;
+	//UPROPERTY()
+	UPROPERTY()
+	TArray<class UMaterialInstance*> MI_Greens;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|PaintColor")
+	EPaintColor Color = EPaintColor::Red;
 
 	class APlayerController* pc;
 	class AVRCharacter* player;
 
+	UPROPERTY()
+	TArray<class UDecalComponent*> DecalComps;
+
 	UFUNCTION(BlueprintCallable, Category = "MySettings|MyFunctions")
-	void DoPainting();
+	void DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRotator rot, FVector DecalSize, EPaintColor pcolor);
+	UFUNCTION(BlueprintCallable, Category = "MySettings|MyFunctions")
+	void ErasePainting(FVector Loc, FVector DecalSize, EPaintColor pcolor);
+
 
 	//
 	void LeftTriggerDown();

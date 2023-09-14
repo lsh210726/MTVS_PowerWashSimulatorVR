@@ -84,7 +84,7 @@ public:
 public:
 // LMH Decal component Ãß°¡
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MySettings|Components")
-	class UDecalCompoenent* decalComp;
+	class UDecalCompoenent* decalComp;	
 
 private:
 	void RightTriggerDown();
