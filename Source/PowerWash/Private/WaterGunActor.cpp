@@ -5,8 +5,7 @@
 #include <Components/BoxComponent.h>
 #include <Components/StaticMeshComponent.h>
 #include <Components/SkeletalMeshComponent.h>
-#include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h>
-#include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
+#include "DrawDebugHelpers.h"
 #include "VRCharacter.h"
 
 // Sets default values
@@ -41,6 +40,10 @@ void AWaterGunActor::BeginPlay()
 		if (player->rightHand)
 		{
 			AttachToComponent(player->rightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
+			player->bHasGun = true;
+			player->waterGun = this;
+			//if(player->waterGun != nullptr) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,*player->waterGun->GetName());
+
 		}
 	}
 
@@ -54,5 +57,23 @@ void AWaterGunActor::Tick(float DeltaTime)
 
 }
 
+void AWaterGunActor::Shoot()
+{
+	FHitResult hitInfo;
+	if (player->bHasGun && meshComp->DoesSocketExist(TEXT("Muzzle")))
+	{
+		FVector muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
+		FRotator muzzleRotation = meshComp->GetSocketRotation(TEXT("Muzzle"));
+		FVector muzzleFwdVec = muzzleRotation.Vector();
+		//FVector NV
+		DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation+muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
+		if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower,ECC_Visibility))
+		{
+			DrawDebugSphere(GetWorld(), hitInfo.ImpactPoint, 10, 8, FColor::White, false, 0.2f, 0, 0.3f);
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, hitInfo.GetActor()->GetName());
+
+		}
+	}
+}
 
 
