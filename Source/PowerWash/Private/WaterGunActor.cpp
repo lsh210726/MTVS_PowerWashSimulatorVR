@@ -65,6 +65,7 @@ void AWaterGunActor::Shoot()
 		FVector muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
 		FRotator muzzleRotation = meshComp->GetSocketRotation(TEXT("Muzzle"));
 		FVector muzzleFwdVec = muzzleRotation.Vector();
+		//FVector NV
 		DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation+muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
 		if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower,ECC_Visibility))
 		{

@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
 	class USkeletalMeshComponent* meshComp;
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
-	float shootPower=200;
+	float shootPower=300;
 
 	UFUNCTION()
 	void Shoot();
