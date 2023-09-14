@@ -37,16 +37,14 @@ UDecalCompoenent::UDecalCompoenent()
 	if (temp_Red_4.Succeeded()) MI_Reds.Add(Cast<UMaterialInstance>(temp_Red_4.Object));
 	
 
-	/*ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Red_1(TEXT("/Game/LMH/Decal2/MI_RedDecal_1.MI_RedDecal_1"));
-	if (temp_Red_1.Succeeded()) MI_Reds.Add(temp_Red_1.Object);
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Red_2(TEXT("/Game/LMH/Decal2/MI_RedDecal_2.MI_RedDecal_2"));
-	if (temp_Red_2.Succeeded()) MI_Reds.Add(Cast<UMaterialInstance>(temp_Red_2.Object));
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Red_3(TEXT("/Game/LMH/Decal2/MI_RedDecal_3.MI_RedDecal_3"));
-	if (temp_Red_3.Succeeded()) MI_Reds.Add(Cast<UMaterialInstance>(temp_Red_3.Object));
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Red_4(TEXT("/Game/LMH/Decal2/MI_RedDecal_4.MI_RedDecal_4"));
-	if (temp_Red_4.Succeeded()) MI_Reds.Add(Cast<UMaterialInstance>(temp_Red_4.Object));
-	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Red_5(TEXT("/Game/LMH/Decal2/MI_RedDecal_5.MI_RedDecal_5"));
-	if (temp_Red_5.Succeeded()) MI_Reds.Add(Cast<UMaterialInstance>(temp_Red_5.Object));*/
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_1(TEXT("/Game/LMH/Decal2/MI_YellowDecal_1.MI_YellowDecal_1"));
+	if (temp_Yellow_1.Succeeded()) MI_Yellows.Add(temp_Yellow_1.Object);
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_2(TEXT("/Game/LMH/Decal2/MI_YellowDecal_1.MI_YellowDecal_2"));
+	if (temp_Yellow_2.Succeeded()) MI_Yellows.Add(Cast<UMaterialInstance>(temp_Yellow_2.Object));
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_3(TEXT("/Game/LMH/Decal2/MI_YellowDecal_1.MI_YellowDecal_3"));
+	if (temp_Yellow_3.Succeeded()) MI_Yellows.Add(Cast<UMaterialInstance>(temp_Yellow_3.Object));
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_4(TEXT("/Game/LMH/Decal2/MI_YellowDecal_1.MI_YellowDecal_4"));
+	if (temp_Yellow_4.Succeeded()) MI_Yellows.Add(Cast<UMaterialInstance>(temp_Yellow_4.Object));
 }
 
 
@@ -67,6 +65,7 @@ void UDecalCompoenent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (player == nullptr) return;
 
+	//if (player->handstate != EHandState::LMH) return;
 	/*pc = Cast<APlayerController>(player->GetController());
 	if (pc == nullptr) return;*/
 
@@ -120,8 +119,11 @@ void UDecalCompoenent::SetupPlayerInputComponent(class UEnhancedInputComponent* 
 }
 void UDecalCompoenent::LeftTriggerDown()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("MouseLeftTriggerDown")), true, FVector2D(1, 1));
-	IsDrawing=true;
+	if (player->handstate == EHandState::LMH) {
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("MouseLeftTriggerDown")), true, FVector2D(1, 1));
+		IsDrawing = true;
+	}
+		
 }
 
 void UDecalCompoenent::LeftTriggerUp()
@@ -189,8 +191,24 @@ void UDecalCompoenent::ErasePainting(FVector Loc,FVector DecalSize,EPaintColor p
 						case 3:
 							decal->SetDecalMaterial(MI_Reds[3]);
 							break;
-						case 4:
-							decal->SetDecalMaterial(MI_Reds[4]);
+
+						default:
+							decal->SetHiddenInGame(true);
+							break;
+						}
+						break;
+					case EPaintColor::Yellow:
+						switch (res)
+						{
+						case 1:
+							/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), res), true, FVector2D(1, 1));*/
+							decal->SetDecalMaterial(MI_Yellows[1]);
+							break;
+						case 2:
+							decal->SetDecalMaterial(MI_Yellows[2]);
+							break;
+						case 3:
+							decal->SetDecalMaterial(MI_Yellows[3]);
 							break;
 
 						default:
@@ -198,7 +216,9 @@ void UDecalCompoenent::ErasePainting(FVector Loc,FVector DecalSize,EPaintColor p
 							break;
 						}
 						break;
+
 					default:
+						
 						break;
 					}				
 				}

@@ -8,6 +8,13 @@
 #include "HandAnimInstance.h"
 #include "VRCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class EHandState : uint8
+{
+	JJH,
+	LSH,
+	LMH
+};
 UCLASS()
 class POWERWASH_API AVRCharacter : public ACharacter
 {
@@ -85,6 +92,9 @@ public:
 // LMH Decal component Ãß°¡
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MySettings|Components")
 	class UDecalCompoenent* decalComp;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "MySettings|state")
+	EHandState handstate= EHandState::LMH;
 
 private:
 	void RightTriggerDown();
