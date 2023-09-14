@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "HandAnimInstance.h"
+#include "..\Source\PowerWash\Public\ShootComponent.h"
 #include "VRCharacter.generated.h"
 
 UCLASS()
@@ -64,6 +65,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class UHandAnimComponent* handAnimComp;
 
+	class UShootComponent* shootComp;//¹°ÃÑ½î±â
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class AWaterGunActor* waterGun;
+
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;
 
@@ -73,8 +79,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|MoveMent")
 	TSubclassOf<class ABallActor> myBall_bp;
 	
-	UPROPERTY(EditDefaultsOnly, Category="MySettings|MoveMent")
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|MoveMent")
 	bool bIsTesting = true;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|MoveMent")
+	bool bHasGun = false;
 
 	class APlayerController* pc;
 	class ABallActor* ball;
@@ -82,7 +91,7 @@ public:
 	class UHandAnimInstance* rightHandAnim;
 
 public:
-// LMH Decal component Ãß°¡
+// LMH Decal component Ãß°¡ <- ÀÌ¹ÎÇÏ ÀÛ¼º
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MySettings|Components")
 	class UDecalCompoenent* decalComp;
 

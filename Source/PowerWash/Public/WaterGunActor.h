@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "..\Source\PowerWash\Public\VRCharacter.h"
 #include "WaterGunActor.generated.h"
 
 UCLASS()
@@ -31,6 +32,13 @@ public:
 	class UBoxComponent* boxComp;
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
 	class USkeletalMeshComponent* meshComp;
+	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
+	float shootPower=200;
+
+	UFUNCTION()
+	void Shoot();
+
+
 
 
 };

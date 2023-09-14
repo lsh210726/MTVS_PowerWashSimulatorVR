@@ -89,12 +89,12 @@ void UDecalCompoenent::SetupPlayerInputComponent(class UEnhancedInputComponent* 
 }
 void UDecalCompoenent::LeftTriggerDown()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("LeftTriggerDown")), true, FVector2D(1, 1));
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("LeftTriggerDown")), true, FVector2D(1, 1));
 }
 
 void UDecalCompoenent::LeftTriggerUp()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("LeftTriggerUp")), true, FVector2D(1, 1));
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("LeftTriggerUp")), true, FVector2D(1, 1));
 }
 void UDecalCompoenent::DoPainting()
 {

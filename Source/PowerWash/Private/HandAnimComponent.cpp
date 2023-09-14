@@ -26,6 +26,7 @@ void UHandAnimComponent::BeginPlay()
 
 	// ...
 	player = GetOwner<AVRCharacter>();
+	//player->rightHandAnim->PoseAlphaGrasp = 1.0f;
 }
 
 
@@ -48,7 +49,7 @@ void UHandAnimComponent::SetupPlayerInputComponent(class UEnhancedInputComponent
 void UHandAnimComponent::OnPressTrigger_Right(const  FInputActionValue& value)
 {
 	float inputValue = value.Get<float>();
-	if(player->rightHandAnim !=nullptr) player->rightHandAnim->PoseAlphaGrasp = inputValue;
+	if(player->rightHandAnim !=nullptr) player->rightHandAnim->PoseAlphaIndexCurl = inputValue;
 }
 
 void UHandAnimComponent::OnPressTrigger_Left(const  FInputActionValue& value)

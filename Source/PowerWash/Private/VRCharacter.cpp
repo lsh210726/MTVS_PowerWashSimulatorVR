@@ -17,6 +17,7 @@
 #include "GrabComponent.h"
 #include "HandAnimComponent.h"
 #include "DecalCompoenent.h"
+#include "WaterGunActor.h"
 #include "Components/DecalComponent.h"
 
 
@@ -77,6 +78,7 @@ AVRCharacter::AVRCharacter()
 	moveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("Move Component"));
 	grabComp = CreateDefaultSubobject<UGrabComponent>(TEXT("Grab Component"));
 	handAnimComp = CreateDefaultSubobject<UHandAnimComponent>(TEXT("Hand Anim Component"));
+	shootComp = CreateDefaultSubobject<UShootComponent>(TEXT("Shoot Component"));
 
 	//LMH decal component 추가
 	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
@@ -133,6 +135,8 @@ void AVRCharacter::BeginPlay()
 	rightHandAnim = Cast<UHandAnimInstance>(rightHand->GetAnimInstance());
 
 	if (leftHandAnim != nullptr) leftHandAnim->isLeft = true;
+
+	rightHandAnim->PoseAlphaGrasp = 1.0f;
 }
 
 // Called every frame
@@ -153,6 +157,7 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		moveComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 		grabComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 		handAnimComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
+		shootComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 
 #pragma region inputTest
 		//오른손 컨트롤러 입력 테스트 바인딩
