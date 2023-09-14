@@ -119,11 +119,12 @@ void UDecalCompoenent::SetupPlayerInputComponent(class UEnhancedInputComponent* 
 }
 void UDecalCompoenent::LeftTriggerDown()
 {
-	if (player->handstate == EHandState::LMH) {
+	/*if (player->handstate == EHandState::LMH) {
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("MouseLeftTriggerDown")), true, FVector2D(1, 1));
 		IsDrawing = true;
-	}
-		
+	}*/
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("MouseLeftTriggerDown")), true, FVector2D(1, 1));
+	IsDrawing = true;
 }
 
 void UDecalCompoenent::LeftTriggerUp()

@@ -110,59 +110,50 @@ void UMoveComponent::Rotate(const FInputActionValue& value)
 
 void UMoveComponent::RighttTriggerDown()
 {
-	//LSH 모드일때만 발동
-	if (player->handstate == EHandState::LSH) {
-		bIsShowLine = true;
+	bIsShowLine = true;
 
-		if (player->ball != nullptr)
-		{
-			player->ball->meshComp->SetSimulatePhysics(true);
-			player->ball->meshComp->SetEnableGravity(false);
-			FVector shootDir = player->leftMotionController->GetComponentTransform().TransformVector(FVector::ForwardVector);
-			player->ball->meshComp->AddImpulse(shootDir * 500);
-		}
+	if (player->ball != nullptr)
+	{
+		player->ball->meshComp->SetSimulatePhysics(true);
+		player->ball->meshComp->SetEnableGravity(false);
+		FVector shootDir = player->leftMotionController->GetComponentTransform().TransformVector(FVector::ForwardVector);
+		player->ball->meshComp->AddImpulse(shootDir * 500);
 	}
-	
 }
 
 void UMoveComponent::RightTriggerUp()
 {
-	//LSH 모드일때만 발동
-	if (player->handstate == EHandState::LSH) {
-		bIsShowLine = false;
+	bIsShowLine = false;
 
-		if (player->ball != nullptr)
-		{
-			player->ball->meshComp->SetSimulatePhysics(true);
+	if (player->ball != nullptr)
+	{
+		player->ball->meshComp->SetSimulatePhysics(true);
 
-			FVector relativeDir = player->leftMotionController->GetComponentTransform().TransformVector(throwDirection);
-			player->ball->meshComp->AddImpulse(relativeDir * throwPower);
-		}
-
-		float duration = 0.50f;
-		player->pc->PlayerCameraManager->StartCameraFade(0.0f, 1.0f, duration, FLinearColor::Black, true);
-
-		FTimerHandle moveHandle;
-		GetWorld()->GetTimerManager().SetTimer(moveHandle, FTimerDelegate::CreateLambda([&]()
-			{
-				//최종위치로 나를 이동시킨다
-				FVector targetLoc = linePositions[linePositions.Num() - 1];
-				targetLoc.Z += player->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-				player->SetActorLocation(targetLoc, true);
-
-				//트리거를 놓으면 라인의 배열 값을 초기화한다 > 선이 생성 안되게
-				TArray<FVector> tempArr = { FVector::ZeroVector };
-				UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(player->lineFx, FName("PointArray"), tempArr);
-
-				//텔레포트 링을 안보이게 한다
-				if (indicatorActor)
-				{
-					indicatorActor->floorIndicator->SetVisibility(false);
-				}
-			}), duration, false);
+		FVector relativeDir = player->leftMotionController->GetComponentTransform().TransformVector(throwDirection);
+		player->ball->meshComp->AddImpulse(relativeDir * throwPower);
 	}
 
+	float duration = 0.50f;
+	player->pc->PlayerCameraManager->StartCameraFade(0.0f, 1.0f, duration, FLinearColor::Black, true);
 
+	FTimerHandle moveHandle;
+	GetWorld()->GetTimerManager().SetTimer(moveHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			//최종위치로 나를 이동시킨다
+			FVector targetLoc = linePositions[linePositions.Num() - 1];
+			targetLoc.Z += player->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+			player->SetActorLocation(targetLoc, true);
+
+			//트리거를 놓으면 라인의 배열 값을 초기화한다 > 선이 생성 안되게
+			TArray<FVector> tempArr = { FVector::ZeroVector };
+			UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(player->lineFx, FName("PointArray"), tempArr);
+
+			//텔레포트 링을 안보이게 한다
+			if (indicatorActor)
+			{
+				indicatorActor->floorIndicator->SetVisibility(false);
+			}
+		}), duration, false);
 	
 }
 
