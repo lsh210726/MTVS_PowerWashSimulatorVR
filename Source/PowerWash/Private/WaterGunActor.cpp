@@ -68,7 +68,7 @@ void AWaterGunActor::Shoot()
 		USkeletalMeshSocket const* mySocket = nullptr;
 		mySocket= meshComp->GetSocketByName(TEXT("Muzzle"));
 		
-		 WideShot(shotAngle,false);
+		WideShot(shotAngle,false);
 	}
 }
 
@@ -102,5 +102,7 @@ void AWaterGunActor::ChangeAngle()
 {
 	if (shotAngle < 40) shotAngle += 10;
 	else shotAngle = 0;
+	//FMath::Lerp;
+
 }
 

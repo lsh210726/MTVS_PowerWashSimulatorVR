@@ -35,7 +35,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")
 	class UStaticMeshComponent* hmdMesh;
 
-	UPROPERTY(EditAnywhere, Category="MySettings|Components")
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="MySettings|Components")
 	class UMotionControllerComponent* leftMotionController;
 
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")
@@ -44,7 +44,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")
 	class UTextRenderComponent* leftLog;
 
-	UPROPERTY(EditAnywhere, Category="MySettings|Components")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="MySettings|Components")
 	class UMotionControllerComponent* rightMotionController;
 
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")
