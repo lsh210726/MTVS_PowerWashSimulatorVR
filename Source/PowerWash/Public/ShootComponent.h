@@ -28,6 +28,15 @@ public:
 	void RighttTriggerDown();
 	void RightHandMove(const struct FInputActionValue& value);
 	void ChangeAngle();
+	void ShowUI();
+
+	UFUNCTION(BlueprintCallable)
+	void HorShot();
+	UFUNCTION(BlueprintCallable)
+	void UIClick();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySettings|Components")
+	bool bShowUI = false;
 
 	class AVRCharacter* player;
 

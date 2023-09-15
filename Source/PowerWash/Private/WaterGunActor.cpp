@@ -8,6 +8,7 @@
 #include "DrawDebugHelpers.h"
 #include "DecalCompoenent.h"
 #include "VRCharacter.h"
+#include <Components/ArrowComponent.h>
 
 // Sets default values
 AWaterGunActor::AWaterGunActor()
@@ -22,6 +23,13 @@ AWaterGunActor::AWaterGunActor()
 	meshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh Component"));
 	meshComp->SetupAttachment(RootComponent);
 	meshComp->SetSimulatePhysics(false);
+
+	muzzleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Muzzle Mesh"));
+	muzzleMesh->SetupAttachment(meshComp);
+	muzzleMesh->SetSimulatePhysics(false);
+	arrowComp = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Comp"));
+	arrowComp->SetupAttachment(muzzleMesh);
+	arrowComp->SetSimulatePhysics(false);
 }
 
 // Called when the game starts or when spawned

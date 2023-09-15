@@ -16,58 +16,62 @@ enum class EPaintColor : uint8
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class POWERWASH_API UDecalCompoenent : public UActorComponent
 {
-	GENERATED_BODY()
+   GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	UDecalCompoenent();
+public:   
+   // Sets default values for this component's properties
+   UDecalCompoenent();
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+   // Called when the game starts
+   virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions);
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "MySettings|Mode")
-	bool IsPainting = true; //얼룩 생성 모드 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|Mode")
-	bool IsDrawing=false; //호스 누르기/떼기 
-	
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|Material")
-	class UMaterialInstance* MI_Color;*/
+public:   
+   // Called every frame
+   virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+   void SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions);
+   UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "MySettings|Mode")
+   bool IsPainting = true; //얼룩 생성 모드 
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|Mode")
+   bool IsDrawing=false; //호스 누르기/떼기 
+   
+   /*UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|Material")
+   class UMaterialInstance* MI_Color;*/
 
-	UPROPERTY()
-	TArray<class UMaterialInstance*> MI_Reds;
+   UPROPERTY()
+   TArray<class UMaterialInstance*> MI_Reds;
 
-	UPROPERTY()
-	TArray<class UMaterialInstance*> MI_Yellows;
-	//UPROPERTY()
-	UPROPERTY()
-	TArray<class UMaterialInstance*> MI_Greens;
+   UPROPERTY()
+   TArray<class UMaterialInstance*> MI_Yellows;
+   //UPROPERTY()
+   UPROPERTY()
+   TArray<class UMaterialInstance*> MI_Greens;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|PaintColor")
-	EPaintColor Color = EPaintColor::Red;
+   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "MySettings|PaintColor")
+   EPaintColor Color = EPaintColor::Red;
 
-	class APlayerController* pc;
-	class AVRCharacter* player;
+   class APlayerController* pc;
+   class AVRCharacter* player;
 
-	UPROPERTY()
-	TArray<class UDecalComponent*> DecalComps;
+   UPROPERTY()
+   TArray<class UDecalComponent*> DecalComps;
 
-	UFUNCTION(BlueprintCallable, Category = "MySettings|MyFunctions")
-	void DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRotator rot, FVector DecalSize, EPaintColor pcolor);
-	UFUNCTION(BlueprintCallable, Category = "MySettings|MyFunctions")
-	void ErasePainting(FVector Loc, FVector DecalSize, EPaintColor pcolor);
+   int sortOrder=0;
+   UPROPERTY()
+   class UMaterialInstance* MI_Color;
 
-	void DecalShoot(FHitResult HitResult);
-	//
-	void LeftTriggerDown();
-	void LeftTriggerUp();
-	//MoveCompoenent 의 left button 클릭여부 가져옴
+   UFUNCTION(BlueprintCallable, Category = "MySettings|MyFunctions")
+   void DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRotator rot, FVector DecalSize, EPaintColor pcolor);
+   UFUNCTION(BlueprintCallable, Category = "MySettings|MyFunctions")
+   void ErasePainting(FVector Loc, FVector DecalSize, EPaintColor pcolor);
 
-	/*UFUNCTION(BlueprintCallable, Category = "LMH|Function")
-	bool chec*/
-	
+   void DecalShoot(FHitResult HitResult);
+   //
+   void LeftTriggerDown();
+   void LeftTriggerUp();
+   //MoveCompoenent 의 left button 클릭여부 가져옴
+
+   /*UFUNCTION(BlueprintCallable, Category = "LMH|Function")
+   bool chec*/
+   
 };

@@ -32,6 +32,10 @@ public:
 	class UBoxComponent* boxComp;
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
 	class USkeletalMeshComponent* meshComp;
+	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
+	class UStaticMeshComponent* muzzleMesh;
+	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
+	class UArrowComponent* arrowComp;
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")//물줄기 거리
 	float shootPower=300;
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")//넓게 쏠 때 발사할 물줄기 개수

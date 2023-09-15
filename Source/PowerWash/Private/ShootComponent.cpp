@@ -44,8 +44,10 @@ void UShootComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* e
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Triggered, this, &UShootComponent::RighttTriggerDown);
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UShootComponent::RighttTriggerDown);
 	enhancedInputComponent->BindAction(inputActions[7], ETriggerEvent::Triggered, this, &UShootComponent::RightHandMove);
-	enhancedInputComponent->BindAction(inputActions[8], ETriggerEvent::Triggered, this, &UShootComponent::RightHandMove);
+	enhancedInputComponent->BindAction(inputActions[8], ETriggerEvent::Triggered, this, &UShootComponent::HorShot);
 	enhancedInputComponent->BindAction(inputActions[9], ETriggerEvent::Triggered, this, &UShootComponent::ChangeAngle);
+	enhancedInputComponent->BindAction(inputActions[10], ETriggerEvent::Triggered, this, &UShootComponent::ShowUI);
+	enhancedInputComponent->BindAction(inputActions[11], ETriggerEvent::Triggered, this, &UShootComponent::UIClick);
 
 }
 
@@ -102,4 +104,22 @@ void UShootComponent::RightHandMove(const struct FInputActionValue& value)
 void UShootComponent::ChangeAngle()
 {
 	if (player->bHasGun)player->waterGun->ChangeAngle();
+}
+
+void UShootComponent::ShowUI()
+{
+	if (!bShowUI)bShowUI = true;
+	else bShowUI = false;
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, bShowUI);
+
+}
+
+void UShootComponent::HorShot()
+{
+
+}
+
+void UShootComponent::UIClick()
+{
+
 }
