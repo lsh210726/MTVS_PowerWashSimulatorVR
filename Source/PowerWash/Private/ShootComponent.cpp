@@ -44,6 +44,8 @@ void UShootComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* e
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Triggered, this, &UShootComponent::RighttTriggerDown);
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UShootComponent::RighttTriggerDown);
 	enhancedInputComponent->BindAction(inputActions[7], ETriggerEvent::Triggered, this, &UShootComponent::RightHandMove);
+	enhancedInputComponent->BindAction(inputActions[8], ETriggerEvent::Triggered, this, &UShootComponent::RightHandMove);
+	enhancedInputComponent->BindAction(inputActions[9], ETriggerEvent::Triggered, this, &UShootComponent::ChangeAngle);
 
 }
 
@@ -95,4 +97,9 @@ void UShootComponent::RightHandMove(const struct FInputActionValue& value)
 
 		UE_LOG(LogTemp, Warning, TEXT("value : %f , %f, %f"), CurrentRotation.Pitch, CurrentRotation.Yaw, CurrentRotation.Roll);
 	}
+}
+
+void UShootComponent::ChangeAngle()
+{
+	if (player->bHasGun)player->waterGun->ChangeAngle();
 }

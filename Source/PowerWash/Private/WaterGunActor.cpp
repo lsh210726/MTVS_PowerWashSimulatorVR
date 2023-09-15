@@ -6,6 +6,7 @@
 #include <Components/StaticMeshComponent.h>
 #include <Components/SkeletalMeshComponent.h>
 #include "DrawDebugHelpers.h"
+#include "DecalCompoenent.h"
 #include "VRCharacter.h"
 
 // Sets default values
@@ -62,18 +63,44 @@ void AWaterGunActor::Shoot()
 	FHitResult hitInfo;
 	if (player->bHasGun && meshComp->DoesSocketExist(TEXT("Muzzle")))
 	{
-		FVector muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
-		FRotator muzzleRotation = meshComp->GetSocketRotation(TEXT("Muzzle"));
-		FVector muzzleFwdVec = muzzleRotation.Vector();
-		//FVector NV
-		DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation+muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
-		if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower,ECC_Visibility))
-		{
-			DrawDebugSphere(GetWorld(), hitInfo.ImpactPoint, 10, 8, FColor::White, false, 0.2f, 0, 0.3f);
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, hitInfo.GetActor()->GetName());
-
-		}
+		muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
+		muzzleRotation = meshComp->GetSocketRotation(TEXT("Muzzle"));
+		USkeletalMeshSocket const* mySocket = nullptr;
+		mySocket= meshComp->GetSocketByName(TEXT("Muzzle"));
+		
+		 WideShot(shotAngle,false);
 	}
 }
 
+void AWaterGunActor::WideShot(float degree,bool horShot)
+{
+	FVector muzzleFwdVec;
+	if (!horShot) muzzleRotation.Pitch -= degree / 2;
+	else muzzleRotation.Yaw -= degree / 2;
+
+	for (int i = 0; i < shotTime; ++i)
+	{
+		muzzleFwdVec = muzzleRotation.Vector();
+		ShootWater(muzzleFwdVec);
+		if (!horShot) muzzleRotation.Pitch += degree / shotTime;
+		else muzzleRotation.Yaw += degree / shotTime;
+	}
+}
+
+void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
+{
+	FHitResult hitInfo;
+	DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
+	if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, ECC_Visibility))
+	{
+		DrawDebugSphere(GetWorld(), hitInfo.ImpactPoint, 5, 8, FColor::White, false, 0.2f, 0, 0.3f);
+		player->decalComp->DecalShoot(hitInfo);
+	}
+}
+
+void AWaterGunActor::ChangeAngle()
+{
+	if (shotAngle < 40) shotAngle += 10;
+	else shotAngle = 0;
+}
 

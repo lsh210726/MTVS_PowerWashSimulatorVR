@@ -27,6 +27,7 @@ public:
 	void SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions);
 	void RighttTriggerDown();
 	void RightHandMove(const struct FInputActionValue& value);
+	void ChangeAngle();
 
 	class AVRCharacter* player;
 

@@ -110,7 +110,7 @@ AVRCharacter::AVRCharacter()
 	{
 		inputActions.Add(tempIA_LG.Object);
 	}
-	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RHM(TEXT("/Game/LSH_WorkSpace/Inputs/IA_RightHandMove.IA_RightHandMove"));
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RHM(TEXT("/Game/LSH_WorkSpace/Inputs/IA_LeftHandMove.IA_LeftHandMove"));
 	if (tempIA_RHM.Succeeded())
 	{
 		inputActions.Add(tempIA_RHM.Object);
@@ -125,6 +125,12 @@ AVRCharacter::AVRCharacter()
 	{
 		inputActions.Add(tempIA_LGV.Object);
 	}
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RWW(TEXT("/Game/LSH_WorkSpace/Inputs/IA_RightHandMove.IA_RightHandMove"));
+	if (tempIA_RWW.Succeeded()) inputActions.Add(tempIA_RWW.Object);
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_LBB(TEXT("/Game/LSH_WorkSpace/Inputs/IA_LeftBtn.IA_LeftBtn"));
+	if (tempIA_LBB.Succeeded()) inputActions.Add(tempIA_LBB.Object);
+	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RBB(TEXT("/Game/LSH_WorkSpace/Inputs/IA_RightBtn.IA_RightBtn"));
+	if (tempIA_RBB.Succeeded()) inputActions.Add(tempIA_RBB.Object);
 }
 
 // Called when the game starts or when spawned

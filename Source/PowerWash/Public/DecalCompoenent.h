@@ -61,7 +61,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MySettings|MyFunctions")
 	void ErasePainting(FVector Loc, FVector DecalSize, EPaintColor pcolor);
 
-
+	void DecalShoot(FHitResult HitResult);
 	//
 	void LeftTriggerDown();
 	void LeftTriggerUp();

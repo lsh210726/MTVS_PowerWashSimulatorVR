@@ -84,33 +84,39 @@ void UDecalCompoenent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 			FCollisionQueryParams Params;
 			Params.AddIgnoredActor(GetOwner());
 
+			// 
 			if (GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_Visibility, Params))
 			{
-				FVector Loc = HitResult.Location;
-				FVector ImpactPoint = HitResult.ImpactPoint;
-				FVector normal = HitResult.Normal;
-				FRotator rot = UKismetMathLibrary::MakeRotFromX(normal);
-				FVector DecalSize = FVector(2, 2, 2);
-
-				UPrimitiveComponent* hitComp = HitResult.GetComponent();
-
-				//얼룩 생성모드
-				if (IsPainting)
-				{
-					//생성 얼룩 색깔 parameter로 주기
-					DoPainting(Loc, hitComp, rot, DecalSize,Color);	
-				}
-				else {
-					/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), DecalComps.Num()), true, FVector2D(1, 1));*/
-
-					//데칼 갯수가 1보다 많으면 for문 시작, 데칼 지우기				
-					ErasePainting(Loc, DecalSize,Color);
-					
-				}
-				DrawDebugLine(GetWorld(), start, end, FColor::Red, false, -1.f, 0.f, 1.f);
+				//DecalShoot(HitResult);
 			}
 		}
 	}
+}
+void UDecalCompoenent::DecalShoot(FHitResult HitResult)
+{
+	FVector Loc = HitResult.Location;
+	FVector ImpactPoint = HitResult.ImpactPoint;
+	FVector normal = HitResult.Normal;
+	FRotator rot = UKismetMathLibrary::MakeRotFromX(normal);
+	FVector DecalSize = FVector(2, 2, 2);
+
+	UPrimitiveComponent* hitComp = HitResult.GetComponent();
+
+	//얼룩 생성모드
+	if (IsPainting)
+	{
+		//생성 얼룩 색깔 parameter로 주기
+		DoPainting(Loc, hitComp, rot, DecalSize, Color);
+	}
+	else {
+		/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), DecalComps.Num()), true, FVector2D(1, 1));*/
+
+		//데칼 갯수가 1보다 많으면 for문 시작, 데칼 지우기				
+		ErasePainting(Loc, DecalSize, Color);
+
+	}
+	//DrawDebugLine(GetWorld(), start, end, FColor::Red, false, -1.f, 0.f, 1.f);
+
 }
 void UDecalCompoenent::SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions)
 {
@@ -228,4 +234,6 @@ void UDecalCompoenent::ErasePainting(FVector Loc,FVector DecalSize,EPaintColor p
 
 	}
 }
+
+
 
