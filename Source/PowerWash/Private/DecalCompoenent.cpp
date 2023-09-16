@@ -38,11 +38,11 @@ UDecalCompoenent::UDecalCompoenent()
 
     ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_1(TEXT("/Game/LMH/Decal2/MI_YellowDecal_1.MI_YellowDecal_1"));
     if (temp_Yellow_1.Succeeded()) MI_Yellows.Add(temp_Yellow_1.Object);
-    ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_2(TEXT("/Game/LMH/Decal2/MI_YellowDecal_1.MI_YellowDecal_2"));
+    ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_2(TEXT("/Game/LMH/Decal2/MI_YellowDecal_2.MI_YellowDecal_2"));
     if (temp_Yellow_2.Succeeded()) MI_Yellows.Add(Cast<UMaterialInstance>(temp_Yellow_2.Object));
-    ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_3(TEXT("/Game/LMH/Decal2/MI_YellowDecal_1.MI_YellowDecal_3"));
+    ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_3(TEXT("/Game/LMH/Decal2/MI_YellowDecal_3.MI_YellowDecal_3"));
     if (temp_Yellow_3.Succeeded()) MI_Yellows.Add(Cast<UMaterialInstance>(temp_Yellow_3.Object));
-    ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_4(TEXT("/Game/LMH/Decal2/MI_YellowDecal_1.MI_YellowDecal_4"));
+    ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Yellow_4(TEXT("/Game/LMH/Decal2/MI_YellowDecal_4.MI_YellowDecal_4"));
     if (temp_Yellow_4.Succeeded()) MI_Yellows.Add(Cast<UMaterialInstance>(temp_Yellow_4.Object));
 
     ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_Green_1(TEXT("/Game/LMH/Decal2/MI_GreenDecal_1.MI_GreenDecal_1"));
@@ -108,23 +108,28 @@ void UDecalCompoenent::DecalShoot(FHitResult HitResult)
     FVector ImpactPoint = HitResult.ImpactPoint;
     FVector normal = HitResult.Normal;
     FRotator rot = UKismetMathLibrary::MakeRotFromX(normal);
-    FVector DecalSize = FVector(2, 2, 2);
+    FVector DecalSize = FVector(3);
 
     UPrimitiveComponent* hitComp = HitResult.GetComponent();
 
+    if(!hitComp) return;
+
+   // if () return;
     //얼룩 생성모드
     if (IsPainting)
-    {
+    { 
         //생성 얼룩 색깔 parameter로 주기
+        PaintedArea+=1;
         DoPainting(Loc, hitComp, rot, DecalSize, Color);
     }
+    //지우기 모드
     else {
         /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), DecalComps.Num()), true, FVector2D(1, 1));*/
-
-        //데칼 갯수가 1보다 많으면 for문 시작, 데칼 지우기            
+        //데칼 갯수가 1보다 많으면 for문 시작, 데칼 지우기
+        
         ErasePainting(Loc, DecalSize, Color);
-
     }
+    GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), PaintedArea), true, FVector2D(1, 1));
     //DrawDebugLine(GetWorld(), start, end, FColor::Red, false, -1.f, 0.f, 1.f);
 
 }
@@ -149,10 +154,8 @@ void UDecalCompoenent::LeftTriggerUp()
     //IsDrawing=false;
 }
 
-
 void UDecalCompoenent::DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRotator rot, FVector DecalSize, EPaintColor pcolor)
 {
-
     switch (pcolor)
     {
     case EPaintColor::Red:
@@ -172,12 +175,14 @@ void UDecalCompoenent::DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRo
         MI_Color = MI_Reds[0];
         break;
     }
-    //if (MI_Color == nullptr) return;
 
     UDecalComponent* decalcomp = UGameplayStatics::SpawnDecalAttached(MI_Color, DecalSize, hitComp, FName("None"), Loc, rot, EAttachLocation::KeepWorldPosition);
 
     if (decalcomp)
-    {
+    { 
+        //PaintedArea += 1;
+       // GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d\n"), PaintedArea), true, FVector2D(1, 1));
+
         decalcomp->SetSortOrder(sortOrder);
         decalcomp->SetFadeScreenSize(0);
         DecalComps.Add(decalcomp);
@@ -201,70 +206,53 @@ void UDecalCompoenent::ErasePainting(FVector Loc, FVector DecalSize, EPaintColor
 
                     switch (pcolor) {
                     case EPaintColor::Red:
-                        switch (res)
-                        {
-                        case 1:
-                            /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), res), true, FVector2D(1, 1));*/
-                            decal->SetDecalMaterial(MI_Reds[1]);
-                            break;
-                        case 2:
-                            decal->SetDecalMaterial(MI_Reds[2]);
-                            break;
-                        case 3:
-                            decal->SetDecalMaterial(MI_Reds[3]);
-                            break;
-
-                        default:
-                            decal->SetHiddenInGame(true);
-                            break;
-                        }
+                        setMat(res,decal,MI_Reds);
                         break;
                     case EPaintColor::Yellow:
-                        switch (res)
-                        {
-                        case 1:
-                            /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), res), true, FVector2D(1, 1));*/
-                            decal->SetDecalMaterial(MI_Yellows[1]);
-                            break;
-                        case 2:
-                            decal->SetDecalMaterial(MI_Yellows[2]);
-                            break;
-                        case 3:
-                            decal->SetDecalMaterial(MI_Yellows[3]);
-                            break;
-
-                        default:
-                            decal->SetHiddenInGame(true);
-                            break;
-                        }
+                        setMat(res, decal, MI_Yellows);
                         break;
                     case EPaintColor::Green:
-                        switch (res)
-                        {
-                        case 1:
-                            /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), res), true, FVector2D(1, 1));*/
-                            decal->SetDecalMaterial(MI_Greens[1]);
-                            break;
-                        case 2:
-                            decal->SetDecalMaterial(MI_Greens[2]);
-                            break;
-                        case 3:
-                            decal->SetDecalMaterial(MI_Greens[3]);
-                            break;
-
-                        default:
-                            decal->SetHiddenInGame(true);
-                            break;
-                        }
+                        setMat(res, decal, MI_Greens);
                         break;
                     default:
+                        setMat(res, decal, MI_Reds);
                         break;
                     }
                 }
             }
         }
-
     }
 }
 
+void UDecalCompoenent::setMat(int res, class UDecalComponent* decal, TArray<class UMaterialInstance*> mi)
+{
+    if(mi.Num()<3) return;
+    if (eraseMode == EEraseMode::AllClear)
+    {
+       // GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), eraseMode), true, FVector2D(1, 1));
+        //PaintedArea -= 1;
+        decal->SetHiddenInGame(true);
+        //GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d\n"), PaintedArea), true, FVector2D(1, 1));
+    }
+    else if (eraseMode == EEraseMode::FourStatge)
+    {
+        switch (res)
+        {
+        case 1:
+            /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), res), true, FVector2D(1, 1));*/
+            decal->SetDecalMaterial(mi[1]);
+            break;
+        case 2:
+            decal->SetDecalMaterial(mi[2]);
+            break;
+        case 3:
+            decal->SetDecalMaterial(mi[3]);
+            break;
+        default:
+            decal->SetHiddenInGame(false);
+            if (!decal->bHiddenInGame) PaintedArea -= 1;
+            break;
+        }
+    }
+}
 
