@@ -55,7 +55,19 @@ void AWaterGunActor::BeginPlay()
 
 		}
 	}
+	
+	currRot = muzzleMesh->GetRelativeRotation();
 
+	StartRotation = muzzleMesh->GetRelativeRotation();
+	TargetRotation = StartRotation;
+
+	// 회전 시간 설정
+	RotationTime = 2.0f; // 예: 2초 동안 회전
+
+	// 시작 시간 저장
+	StartTime = GetWorld()->GetTimeSeconds();
+
+	UE_LOG(LogTemp, Warning, TEXT("StartRotation : %f,%f,%f"), StartRotation.Roll, StartRotation.Pitch, StartRotation.Yaw);
 
 }
 
@@ -63,6 +75,21 @@ void AWaterGunActor::BeginPlay()
 void AWaterGunActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+	if (muzzleMesh)
+	{
+			StartRotation = muzzleMesh->GetRelativeRotation();
+		if (StartRotation.Roll <= TargetRotation.Roll)
+		{
+			auto changeRot = FRotator(StartRotation.Pitch , StartRotation.Yaw, StartRotation.Roll + 1.0f);
+			UE_LOG(LogTemp, Warning, TEXT("StartRotation : %f,%f,%f & TargetRotation : %f,%f,%f &changeRot : %f,%f,%f"), StartRotation.Roll, StartRotation.Pitch, StartRotation.Yaw, TargetRotation.Roll, TargetRotation.Pitch, TargetRotation.Yaw, changeRot.Roll, changeRot.Pitch, changeRot.Yaw);
+			muzzleMesh->SetRelativeRotation(changeRot);
+		}
+
+		muzzleRotation = muzzleMesh->GetComponentRotation();//meshComp->GetSocketRotation(TEXT("Muzzle"));
+
+	}
 
 }
 
@@ -72,15 +99,15 @@ void AWaterGunActor::Shoot()
 	if (player->bHasGun && meshComp->DoesSocketExist(TEXT("Muzzle")))
 	{
 		muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
-		muzzleRotation = meshComp->GetSocketRotation(TEXT("Muzzle"));
+		muzzleRotation = /*muzzleMesh->GetComponentRotation();*/meshComp->GetSocketRotation(TEXT("Muzzle"));
 		USkeletalMeshSocket const* mySocket = nullptr;
 		mySocket= meshComp->GetSocketByName(TEXT("Muzzle"));
 		
-		WideShot(shotAngle,false);
+		WideShot(shotAngle);
 	}
 }
 
-void AWaterGunActor::WideShot(float degree,bool horShot)
+void AWaterGunActor::WideShot(float degree)
 {
 	FVector muzzleFwdVec;
 	if (!horShot) muzzleRotation.Pitch -= degree / 2;
@@ -111,6 +138,22 @@ void AWaterGunActor::ChangeAngle()
 	if (shotAngle < 40) shotAngle += 10;
 	else shotAngle = 0;
 	//FMath::Lerp;
+
+}
+
+void AWaterGunActor::shotRot()
+{
+	if (horShot)horShot = false;
+	else horShot = true;
+	/*currRot = muzzleMesh->GetComponentRotation();*/
+	if (currRot.Pitch > 88) currRot.Pitch+= 90;
+	if(oneTime)
+	{
+
+		TargetRotation = FRotator(StartRotation.Pitch , StartRotation.Yaw, StartRotation.Roll + 90.f);
+		UE_LOG(LogTemp, Warning, TEXT("oneTIme"));
+		oneTime = false;
+	}
 
 }
 

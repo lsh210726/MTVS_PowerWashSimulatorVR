@@ -40,17 +40,29 @@ public:
 	float shootPower=300;
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")//넓게 쏠 때 발사할 물줄기 개수
 	int shotTime=10;
+	UPROPERTY(EditAnywhere, Category = "MySettings|Components")//세로로 쏠지 가로로 쏠지
+	bool horShot = false;
 
 	FVector muzzleLocation;
 	FRotator muzzleRotation;
 	float shotAngle = 0;
+	FRotator currRot;
+
+	FRotator StartRotation;
+	FRotator TargetRotation;
+	float RotationTime = 0;
+	double StartTime = 0;
+
+	bool oneTime = true;
+	
 
 	UFUNCTION()
 	void Shoot();
 
-	void WideShot(float degree, bool horShot);
+	void WideShot(float degree);
 	void ShootWater( FVector muzzleFwdVec);
 	void ChangeAngle();
+	void shotRot();
 
 
 

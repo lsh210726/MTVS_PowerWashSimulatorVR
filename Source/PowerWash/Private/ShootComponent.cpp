@@ -116,7 +116,7 @@ void UShootComponent::ShowUI()
 
 void UShootComponent::HorShot()
 {
-
+	if (player->bHasGun)player->waterGun->shotRot();
 }
 
 void UShootComponent::UIClick()
