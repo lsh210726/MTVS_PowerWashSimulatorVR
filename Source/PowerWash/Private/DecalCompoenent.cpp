@@ -73,6 +73,28 @@ void UDecalCompoenent::BeginPlay()
 void UDecalCompoenent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    //if (!IsPainting)
+    //{
+    //    if (PaintedTotalArea > 0 && PaintedArea > 0)
+    //    {
+    //       /* GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, FString::Printf(TEXT("%d"), PaintedTotalArea), true, FVector2D(1, 1));*/
+    //       if ((PaintedArea % PaintedTotalArea) > 0)
+    //       {
+    //           double pp = (1 / (PaintedArea % PaintedTotalArea)*100);
+    //           //double pp = (PaintedTotalArea % PaintedArea);
+
+    //           GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, FString::Printf(TEXT("%.2lf"), pp), true, FVector2D(1, 1));
+    //       }
+    //       
+    //       //비율 
+    //      
+		  // /*if (pp < 40)
+		  // {
+    //        GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, FString::Printf(TEXT("%.2lf"), pp), true, FVector2D(1, 1));
+		  // }*/  
+    //    }
+    //}
     /*if (player == nullptr) return;*/
 
     //if (player->handstate != EHandState::LMH) return;
@@ -119,7 +141,7 @@ void UDecalCompoenent::DecalShoot(FHitResult HitResult)
     if (IsPainting)
     { 
         //생성 얼룩 색깔 parameter로 주기
-        PaintedArea+=1;
+        //PaintedArea+=1;
         DoPainting(Loc, hitComp, rot, DecalSize, Color);
     }
     //지우기 모드
@@ -129,10 +151,46 @@ void UDecalCompoenent::DecalShoot(FHitResult HitResult)
         
         ErasePainting(Loc, DecalSize, Color);
     }
-    GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), PaintedArea), true, FVector2D(1, 1));
+    //GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), PaintedArea), true, FVector2D(1, 1));
     //DrawDebugLine(GetWorld(), start, end, FColor::Red, false, -1.f, 0.f, 1.f);
 
 }
+
+void UDecalCompoenent::AllClearMode(class UDecalComponent* decal)
+{
+    if (!decal->bHiddenInGame)
+    {
+        decal->SetHiddenInGame(true);
+        --PaintedArea;
+
+    }
+}
+
+void UDecalCompoenent::FourStageMode(int res, class UDecalComponent* decal, TArray<class UMaterialInstance*> mi)
+{
+    switch (res)
+    {
+    case 1:
+        /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), res), true, FVector2D(1, 1));*/
+        decal->SetDecalMaterial(mi[1]);
+        break;
+    case 2:
+        decal->SetDecalMaterial(mi[2]);
+        break;
+    case 3:
+        decal->SetDecalMaterial(mi[3]);
+        break;
+    default:
+        if (!decal->bHiddenInGame) {
+            --PaintedArea;
+            decal->SetHiddenInGame(true);
+            /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), PaintedArea), true, FVector2D(1, 1));*/
+
+        }
+        break;
+    }
+}
+
 void UDecalCompoenent::SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions)
 {
     //enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UDecalCompoenent::LeftTriggerDown);
@@ -180,7 +238,7 @@ void UDecalCompoenent::DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRo
 
     if (decalcomp)
     { 
-        //PaintedArea += 1;
+        PaintedArea += 1;
        // GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d\n"), PaintedArea), true, FVector2D(1, 1));
 
         decalcomp->SetSortOrder(sortOrder);
@@ -227,32 +285,16 @@ void UDecalCompoenent::ErasePainting(FVector Loc, FVector DecalSize, EPaintColor
 void UDecalCompoenent::setMat(int res, class UDecalComponent* decal, TArray<class UMaterialInstance*> mi)
 {
     if(mi.Num()<3) return;
+
+    
     if (eraseMode == EEraseMode::AllClear)
     {
-       // GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), eraseMode), true, FVector2D(1, 1));
-        //PaintedArea -= 1;
-        decal->SetHiddenInGame(true);
-        //GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d\n"), PaintedArea), true, FVector2D(1, 1));
+       AllClearMode(decal);
     }
     else if (eraseMode == EEraseMode::FourStatge)
     {
-        switch (res)
-        {
-        case 1:
-            /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), res), true, FVector2D(1, 1));*/
-            decal->SetDecalMaterial(mi[1]);
-            break;
-        case 2:
-            decal->SetDecalMaterial(mi[2]);
-            break;
-        case 3:
-            decal->SetDecalMaterial(mi[3]);
-            break;
-        default:
-            decal->SetHiddenInGame(false);
-            if (!decal->bHiddenInGame) PaintedArea -= 1;
-            break;
-        }
+        FourStageMode(res,decal,mi);
+        
     }
 }
 

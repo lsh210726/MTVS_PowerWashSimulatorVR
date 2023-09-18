@@ -64,8 +64,10 @@ public:
 
    UPROPERTY()
    int sortOrder=0;
-   UPROPERTY()
+   UPROPERTY(BlueprintReadOnly)
    int PaintedArea=0;
+   UPROPERTY(BlueprintReadWrite);
+   int PaintedTotalArea=0;
 
    UPROPERTY()
    class UMaterialInstance* MI_Color;
@@ -77,6 +79,9 @@ public:
 
    void setMat(int res, class UDecalComponent* decal,TArray<class UMaterialInstance*> mi);
    void DecalShoot(FHitResult HitResult);
+   void AllClearMode(class UDecalComponent* decal);
+   void FourStageMode(int res,class UDecalComponent* decal, TArray<class UMaterialInstance*> mi);
+
    //
    void LeftTriggerDown();
    void LeftTriggerUp();
