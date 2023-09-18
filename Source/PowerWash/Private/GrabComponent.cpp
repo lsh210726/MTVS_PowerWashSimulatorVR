@@ -129,7 +129,7 @@ void UGrabComponent::GrabObject()
 		}
 
 	}
-	DrawDebugSphere(GetWorld(), startLoc, 30, 12, FColor::Red, false, 1, 0, 0.1f);
+	//DrawDebugSphere(GetWorld(), startLoc, 30, 12, FColor::Red, false, 1, 0, 0.1f);
 }
 
 void UGrabComponent::ReleaseObject()
