@@ -21,6 +21,7 @@
 #include "Components/DecalComponent.h"
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h>
+#include "Components/WidgetInteractionComponent.h"
 
 
 // Sets default values
@@ -67,6 +68,10 @@ AVRCharacter::AVRCharacter()
 	rightLog->SetTextRenderColor(FColor(255, 255, 0, 255));
 	rightLog->SetHorizontalAlignment(EHTA_Center);
 	rightLog->SetVerticalAlignment(EVRTA_TextCenter);
+
+	rightWidgetPointer = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("Right Widget Pointer"));
+	rightWidgetPointer->SetupAttachment(rightHand);
+	rightWidgetPointer->SetRelativeRotation(FRotator(0, 90, 0));
 
 	lineFx = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Line Effect"));//텔레포트 위치까지 이어지는 선 나이아가라
 	lineFx->SetupAttachment(RootComponent);
@@ -173,7 +178,7 @@ void AVRCharacter::BeginPlay()
 
 	if (leftHandAnim != nullptr) leftHandAnim->isLeft = true;
 
-	rightHandAnim->PoseAlphaGrasp = 1.0f;
+	if(rightHandAnim) rightHandAnim->PoseAlphaGrasp = 1.0f;
 }
 
 // Called every frame

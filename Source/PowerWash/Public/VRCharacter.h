@@ -70,6 +70,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class AWaterGunActor* waterGun;
 
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UWidgetInteractionComponent* rightWidgetPointer;//VR 위젯 상호작용
+
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;
 
