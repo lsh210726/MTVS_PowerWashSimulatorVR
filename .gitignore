@@ -72,3 +72,14 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+
+Content/BeachScene/HDRI_Backdrop/HDRI_Sunrise.uasset
+Content/BeachScene/Textures/Environment/T_CourseAsphalt_BC.uasset
+Content/BeachScene/Textures/Environment/T_CourseAsphalt_N.uasset
+Content/BeachScene/Textures/Environment/T_CrackedAsphalt_BC.uasset
+Content/BeachScene/Textures/Environment/T_CrackedAsphalt_N.uasset
+Content/BeachScene/Textures/Environment/T_Curb02_N.uasset
+Content/BeachScene/Textures/Environment/T_Curb_BC.uasset
+Content/BeachScene/Textures/Environment/T_Curb_N.uasset
+Content/BeachScene/Textures/Environment/T_Rock_N.uasset
