@@ -85,6 +85,9 @@ public:
    //
    void LeftTriggerDown();
    void LeftTriggerUp();
+
+   
+
    //MoveCompoenent 의 left button 클릭여부 가져옴
 
    

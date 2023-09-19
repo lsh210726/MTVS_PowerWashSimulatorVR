@@ -212,6 +212,7 @@ void UDecalCompoenent::LeftTriggerUp()
     //IsDrawing=false;
 }
 
+
 void UDecalCompoenent::DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRotator rot, FVector DecalSize, EPaintColor pcolor)
 {
     switch (pcolor)
