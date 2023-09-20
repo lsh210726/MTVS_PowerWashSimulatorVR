@@ -29,4 +29,7 @@ public:
 private:
 	class AVRCharacter* player;
 
+	void PressButton();
+	void ReleaseButton();
+
 };

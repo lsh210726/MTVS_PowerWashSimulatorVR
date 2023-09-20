@@ -22,6 +22,8 @@
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h>
 #include "Components/WidgetInteractionComponent.h"
+#include "WidgetPointerComponent.h"
+
 
 
 // Sets default values
@@ -90,6 +92,12 @@ AVRCharacter::AVRCharacter()
 	//LMH decal component 추가
 	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
 
+	//위젯 포인터 컴포넌트 추가
+	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
+
+#pragma region key bind
+
+
 	ConstructorHelpers::FObjectFinder<UInputMappingContext> tempIMC(TEXT("/Game/LSH_WorkSpace/Inputs/IMC_VRInput.IMC_VRInput"));
 	if (tempIMC.Succeeded())
 	{
@@ -136,6 +144,7 @@ AVRCharacter::AVRCharacter()
 	if (tempIA_LBB.Succeeded()) inputActions.Add(tempIA_LBB.Object);
 	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RBB(TEXT("/Game/LSH_WorkSpace/Inputs/IA_RightBtn.IA_RightBtn"));
 	if (tempIA_RBB.Succeeded()) inputActions.Add(tempIA_RBB.Object);
+#pragma endregion
 }
 
 // Called when the game starts or when spawned
@@ -200,6 +209,7 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		grabComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 		handAnimComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 		shootComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
+		widgetPointerComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 
 #pragma region inputTest
 		//오른손 컨트롤러 입력 테스트 바인딩

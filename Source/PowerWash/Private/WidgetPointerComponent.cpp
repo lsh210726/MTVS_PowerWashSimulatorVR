@@ -3,6 +3,7 @@
 
 #include "WidgetPointerComponent.h"
 #include "EnhancedInputComponent.h"
+#include <UMG/Public/Components/WidgetInteractionComponent.h>
 #include "VRCharacter.h"
 
 
@@ -23,8 +24,8 @@ void UWidgetPointerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	player->GetOwner<AVRCharacter>();
-}
+	player = GetOwner<AVRCharacter>();
+}	
 
 
 // Called every frame
@@ -37,7 +38,17 @@ void UWidgetPointerComponent::TickComponent(float DeltaTime, ELevelTick TickType
 
 void UWidgetPointerComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions)
 {
-
+ 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UWidgetPointerComponent::PressButton); 
+ 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UWidgetPointerComponent::ReleaseButton); 
 }
 
+void UWidgetPointerComponent::PressButton()
+{
+	player->rightWidgetPointer->PressPointerKey(EKeys::LeftMouseButton);
+}
+
+void UWidgetPointerComponent::ReleaseButton()
+{
+	player->rightWidgetPointer->ReleasePointerKey(EKeys::LeftMouseButton);
+}
 

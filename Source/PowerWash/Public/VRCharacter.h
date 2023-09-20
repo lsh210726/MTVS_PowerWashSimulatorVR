@@ -73,6 +73,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class UWidgetInteractionComponent* rightWidgetPointer;//VR 위젯 상호작용
 
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UWidgetPointerComponent* widgetPointerComp;
+
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;
 
