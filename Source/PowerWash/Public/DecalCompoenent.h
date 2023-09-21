@@ -58,6 +58,7 @@ public:
 
    class APlayerController* pc;
    class AVRCharacter* player;
+   class AWaterGunActor* gun;
 
    UPROPERTY()
    TArray<class UDecalComponent*> DecalComps;
@@ -86,11 +87,10 @@ public:
    void LeftTriggerDown();
    void LeftTriggerUp();
 
-   
-
+   void PowerWashEffect();
    //MoveCompoenent 의 left button 클릭여부 가져옴
 
-   
+
    /*UFUNCTION(BlueprintCallable, Category = "LMH|Function")
    bool chec*/
    

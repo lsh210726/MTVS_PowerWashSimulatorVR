@@ -7,11 +7,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "VRCharacter.h"
+#include "WaterGunActor.h"
+#include "Components/ActorComponent.h"
 #include <Components/PrimitiveComponent.h>
 #include <Kismet/KismetMathLibrary.h>
 #include <Components/DecalComponent.h>
 #include <Materials/MaterialInterface.h>
 #include <Materials/MaterialInstance.h>
+#include "MotionControllerComponent.h"
 
 //enum class MI_Red_Name : uint8
 //{
@@ -65,15 +68,15 @@ void UDecalCompoenent::BeginPlay()
     if (player == nullptr) return;
 
     if (MI_Color == nullptr) MI_Color = MI_Reds[0];
+    gun=player->waterGun;
 
 }
-
 
 // Called every frame
 void UDecalCompoenent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+    
     //if (!IsPainting)
     //{
     //    if (PaintedTotalArea > 0 && PaintedArea > 0)
@@ -123,6 +126,7 @@ void UDecalCompoenent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
     //      }
     //   }
     //}
+    //DrawTrajectory(throwDirection, throwPower, myMass);
 }
 void UDecalCompoenent::DecalShoot(FHitResult HitResult)
 {
@@ -148,12 +152,10 @@ void UDecalCompoenent::DecalShoot(FHitResult HitResult)
     else {
         /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), DecalComps.Num()), true, FVector2D(1, 1));*/
         //데칼 갯수가 1보다 많으면 for문 시작, 데칼 지우기
-        
         ErasePainting(Loc, DecalSize, Color);
     }
     //GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), PaintedArea), true, FVector2D(1, 1));
     //DrawDebugLine(GetWorld(), start, end, FColor::Red, false, -1.f, 0.f, 1.f);
-
 }
 
 void UDecalCompoenent::AllClearMode(class UDecalComponent* decal)
@@ -162,7 +164,6 @@ void UDecalCompoenent::AllClearMode(class UDecalComponent* decal)
     {
         decal->SetHiddenInGame(true);
         --PaintedArea;
-
     }
 }
 
@@ -185,7 +186,6 @@ void UDecalCompoenent::FourStageMode(int res, class UDecalComponent* decal, TArr
             --PaintedArea;
             decal->SetHiddenInGame(true);
             /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), PaintedArea), true, FVector2D(1, 1));*/
-
         }
         break;
     }
@@ -212,6 +212,19 @@ void UDecalCompoenent::LeftTriggerUp()
     //IsDrawing=false;
 }
 
+void UDecalCompoenent::PowerWashEffect()
+{
+    if (player->bHasGun && gun->meshComp->DoesSocketExist(TEXT("Muzzle")))
+    {
+        FVector muzzleLocation = gun->meshComp->GetSocketLocation(TEXT("Muzzle"));
+        FRotator muzzleRotation = gun->meshComp->GetSocketRotation(TEXT("Muzzle"));
+        USkeletalMeshSocket const* mySocket = nullptr;
+        mySocket =gun-> meshComp->GetSocketByName(TEXT("Muzzle"));
+
+        //WideShot(shotAngle);
+    }
+
+}
 
 void UDecalCompoenent::DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRotator rot, FVector DecalSize, EPaintColor pcolor)
 {
@@ -235,18 +248,60 @@ void UDecalCompoenent::DoPainting(FVector Loc, UPrimitiveComponent* hitComp, FRo
         break;
     }
 
-    UDecalComponent* decalcomp = UGameplayStatics::SpawnDecalAttached(MI_Color, DecalSize, hitComp, FName("None"), Loc, rot, EAttachLocation::KeepWorldPosition);
+    //if (DecalComps.Num() > 10) {
+    //    for (UDecalComponent* decal : DecalComps)
+    //    {
+    //        if (decal) {
+    //            double dist = FVector::Distance(Loc, decal->GetComponentLocation());
+    //            if (dist && dist <= DecalSize.X)
+    //            {
+    //                if (IsValid(decal->GetDecalMaterial()))
+    //                {
+    //                    FString dName = decal->GetDecalMaterial()->GetName();
+    //                    int res = dName[dName.Len() - 1] - '0';
 
-    if (decalcomp)
-    { 
-        PaintedArea += 1;
-       // GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d\n"), PaintedArea), true, FVector2D(1, 1));
+    //                    switch (pcolor) {
+    //                    case EPaintColor::Red:
+    //                        setMat(res, decal, MI_Reds);
+    //                        break;
+    //                    case EPaintColor::Yellow:
+    //                        setMat(res, decal, MI_Yellows);
+    //                        break;
+    //                    case EPaintColor::Green:
+    //                        setMat(res, decal, MI_Greens);
+    //                        break;
+    //                    default:
+    //                        setMat(res, decal, MI_Reds);
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //    //GetAttachedActors();
+    //    //double dist = FVector::Distance(Loc, decalcomp->GetComponentLocation());
+    //    //if (dist && dist <= DecalSize.X)
+    //    //{
+    //    //    if (IsValid(decalcomp->GetDecalMaterial()))
+    //    //    {
+    //    //        FString dName = decalcomp->GetDecalMaterial()->GetName();
+    //    //        int res = dName[dName.Len() - 1] - '0';
+    //    //    }
+    //    //}
+    //    ///*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), DecalComps.Num()), true, FVector2D(1, 1));*/
+    //}
+    //else {}
+        UDecalComponent* decalcomp = UGameplayStatics::SpawnDecalAttached(MI_Color, DecalSize, hitComp, FName("None"), Loc, rot, EAttachLocation::KeepWorldPosition);
 
-        decalcomp->SetSortOrder(sortOrder);
-        decalcomp->SetFadeScreenSize(0);
-        DecalComps.Add(decalcomp);
-        /*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d"), DecalComps.Num()), true, FVector2D(1, 1));*/
-    }
+        // GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%d\n"), PaintedArea), true, FVector2D(1, 1));
+        if (decalcomp)
+        {
+            PaintedArea += 1;
+            decalcomp->SetSortOrder(sortOrder);
+            decalcomp->SetFadeScreenSize(0);
+            DecalComps.Add(decalcomp);
+        }
+    
 }
 
 void UDecalCompoenent::ErasePainting(FVector Loc, FVector DecalSize, EPaintColor pcolor)
@@ -298,4 +353,3 @@ void UDecalCompoenent::setMat(int res, class UDecalComponent* decal, TArray<clas
         
     }
 }
-
