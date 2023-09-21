@@ -21,6 +21,7 @@
 #include "Components/DecalComponent.h"
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h>
+#include "RenderTargetProcess.h"
 
 
 // Sets default values
@@ -82,8 +83,8 @@ AVRCharacter::AVRCharacter()
 	handAnimComp = CreateDefaultSubobject<UHandAnimComponent>(TEXT("Hand Anim Component"));
 	shootComp = CreateDefaultSubobject<UShootComponent>(TEXT("Shoot Component"));
 
-	//LMH decal component 추가
-	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
+	//LMH RenderTarget component 추가
+	//DrawComp = CreateDefaultSubobject<URenderTargetProcess>(TEXT("RenderTargerProcess Component"));
 
 	ConstructorHelpers::FObjectFinder<UInputMappingContext> tempIMC(TEXT("/Game/LSH_WorkSpace/Inputs/IMC_VRInput.IMC_VRInput"));
 	if (tempIMC.Succeeded())
@@ -214,9 +215,6 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		//enhancedInputComponent->BindAction(inputActions[8], ETriggerEvent::Completed, this, &AVRCharacter::RightBUp);
 		//enhancedInputComponent->BindAction(inputActions[9], ETriggerEvent::Started, this, &AVRCharacter::RightBTouch);
 #pragma endregion inputTest
-
-		//LMH Decal component 추가
-		decalComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 	}
 }
 
