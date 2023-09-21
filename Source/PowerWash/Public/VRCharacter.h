@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="MySettings|Components")
 	class UMotionControllerComponent* leftMotionController;
 
-	UPROPERTY(EditAnywhere, Category="MySettings|Components")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MySettings|Components")
 	class USkeletalMeshComponent* leftHand;
 
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")
