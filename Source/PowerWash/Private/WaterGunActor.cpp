@@ -9,6 +9,8 @@
 #include "DecalCompoenent.h"
 #include "VRCharacter.h"
 #include <Components/ArrowComponent.h>
+#include <Kismet/GameplayStatics.h>
+#include "RenderTargetProcess.h"
 
 // Sets default values
 AWaterGunActor::AWaterGunActor()
@@ -129,8 +131,8 @@ void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 	if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, ECC_Visibility))
 	{
 		DrawDebugSphere(GetWorld(), hitInfo.ImpactPoint, 5, 8, FColor::White, false, 0.2f, 0, 0.3f);
-		player->decalComp->DecalShoot(hitInfo);
-	}
+		//player->DrawComp->DrawCar(hitInfo);
+	}	
 }
 
 void AWaterGunActor::ChangeAngle()
