@@ -21,6 +21,9 @@
 #include "Components/DecalComponent.h"
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h>
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h>
+#include "Components/WidgetInteractionComponent.h"
+#include "WidgetPointerComponent.h"
+
 
 
 // Sets default values
@@ -68,6 +71,10 @@ AVRCharacter::AVRCharacter()
 	rightLog->SetHorizontalAlignment(EHTA_Center);
 	rightLog->SetVerticalAlignment(EVRTA_TextCenter);
 
+	rightWidgetPointer = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("Right Widget Pointer"));
+	rightWidgetPointer->SetupAttachment(rightHand);
+	rightWidgetPointer->SetRelativeRotation(FRotator(0, 90, 0));
+
 	lineFx = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Line Effect"));//텔레포트 위치까지 이어지는 선 나이아가라
 	lineFx->SetupAttachment(RootComponent);
 
@@ -84,6 +91,12 @@ AVRCharacter::AVRCharacter()
 
 	//LMH decal component 추가
 	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
+
+	//위젯 포인터 컴포넌트 추가
+	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
+
+#pragma region key bind
+
 
 	ConstructorHelpers::FObjectFinder<UInputMappingContext> tempIMC(TEXT("/Game/LSH_WorkSpace/Inputs/IMC_VRInput.IMC_VRInput"));
 	if (tempIMC.Succeeded())
@@ -131,6 +144,7 @@ AVRCharacter::AVRCharacter()
 	if (tempIA_LBB.Succeeded()) inputActions.Add(tempIA_LBB.Object);
 	ConstructorHelpers::FObjectFinder<UInputAction> tempIA_RBB(TEXT("/Game/LSH_WorkSpace/Inputs/IA_RightBtn.IA_RightBtn"));
 	if (tempIA_RBB.Succeeded()) inputActions.Add(tempIA_RBB.Object);
+#pragma endregion
 }
 
 // Called when the game starts or when spawned
@@ -173,7 +187,7 @@ void AVRCharacter::BeginPlay()
 
 	if (leftHandAnim != nullptr) leftHandAnim->isLeft = true;
 
-	rightHandAnim->PoseAlphaGrasp = 1.0f;
+	if(rightHandAnim) rightHandAnim->PoseAlphaGrasp = 1.0f;
 }
 
 // Called every frame
@@ -195,6 +209,7 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		grabComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 		handAnimComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 		shootComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
+		widgetPointerComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 
 #pragma region inputTest
 		//오른손 컨트롤러 입력 테스트 바인딩

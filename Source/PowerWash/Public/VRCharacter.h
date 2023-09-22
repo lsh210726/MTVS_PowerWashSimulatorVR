@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="MySettings|Components")
 	class UMotionControllerComponent* leftMotionController;
 
-	UPROPERTY(EditAnywhere, Category="MySettings|Components")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MySettings|Components")
 	class USkeletalMeshComponent* leftHand;
 
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")
@@ -69,6 +69,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class AWaterGunActor* waterGun;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UWidgetInteractionComponent* rightWidgetPointer;//VR 위젯 상호작용
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UWidgetPointerComponent* widgetPointerComp;
 
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;

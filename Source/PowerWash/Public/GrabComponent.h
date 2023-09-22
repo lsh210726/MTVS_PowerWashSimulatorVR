@@ -34,12 +34,15 @@ public:
 
 private:
 	class AVRCharacter* player;
-	class APickUpActor* grabbedObject;
+	//class APickUpActor* grabbedObject;
+	class AMuzzleActor* grabbedObject;
 
 	FVector prevLoc;
 	FVector deltaLoc;
 	FQuat prevRot;
 	FQuat deltaRot;
+
+
 
 	void GrabObject();
 	void ReleaseObject();

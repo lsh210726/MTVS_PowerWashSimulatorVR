@@ -30,7 +30,7 @@ private:
 public:
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
 	class UBoxComponent* boxComp;
-	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,  Category="MySettings|Components")
 	class USkeletalMeshComponent* meshComp;
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
 	class UStaticMeshComponent* muzzleMesh;
