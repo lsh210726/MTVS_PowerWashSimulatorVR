@@ -24,33 +24,26 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite,Category="MySettings|Components")
-	class UStaticMeshComponent* sm;*/
-
-	/*UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="MySettings|Components")
-	class USceneComponent* Scence;*/
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="LMH|Settings")
 	class UMaterial* BrushMaterialTemplates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="LMH|Settings")
 	class UTextureRenderTarget2D* PaintingRenderTarget;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LMH|Settings")
+	class UMaterialInstanceDynamic* BrushMaterialInstance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="LMH|Settings")
-	class UTextureRenderTarget2D* PaintingRenderTargetCopy;
 	
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LMH|Settings")
-		class UMaterialInstanceDynamic* BrushMaterialInstance;
 	UFUNCTION(BlueprintCallable,Category = "LMH|Settings")
-	void DrawBrush();
+	void DrawCar(const FHitResult& hitInfo);
 
 	UFUNCTION(BlueprintCallable,Category = "LMH|Settings")
-	void CopyToMainCanvas();
+	void DrawSize(float drawSize);
+
+	class AVRCharacter* player;
+	//void (FHitResult HitResult);
 
 
-
-	//UMaterialInstanceDynamic::Create(MaterialTemplate, this);
-
-		
+	
 };

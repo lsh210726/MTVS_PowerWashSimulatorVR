@@ -9,11 +9,16 @@
 #include "DecalCompoenent.h"
 #include "VRCharacter.h"
 #include <Components/ArrowComponent.h>
+#include <Kismet/BlueprintFunctionLibrary.h>
+#include "RenderTargetProcess.h"
+#include "Kismet/GameplayStatics.h"
+
+
 
 // Sets default values
 AWaterGunActor::AWaterGunActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Component"));
@@ -40,9 +45,9 @@ void AWaterGunActor::BeginPlay()
 	Super::BeginPlay();
 	//owner를 설정해줘야 한다
 	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
-	{
+		{
 
-	});
+		});
 
 	player = Cast<AVRCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
@@ -57,7 +62,7 @@ void AWaterGunActor::BeginPlay()
 
 		}
 	}
-	
+
 	currRot = muzzleMesh->GetRelativeRotation();
 
 	StartRotation = muzzleMesh->GetRelativeRotation();
@@ -71,6 +76,7 @@ void AWaterGunActor::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("StartRotation : %f,%f,%f"), StartRotation.Roll, StartRotation.Pitch, StartRotation.Yaw);
 
+
 }
 
 // Called every frame
@@ -81,10 +87,10 @@ void AWaterGunActor::Tick(float DeltaTime)
 
 	if (muzzleMesh)
 	{
-			StartRotation = muzzleMesh->GetRelativeRotation();
+		StartRotation = muzzleMesh->GetRelativeRotation();
 		if (StartRotation.Roll <= TargetRotation.Roll)
 		{
-			auto changeRot = FRotator(StartRotation.Pitch , StartRotation.Yaw, StartRotation.Roll + 1.0f);
+			auto changeRot = FRotator(StartRotation.Pitch, StartRotation.Yaw, StartRotation.Roll + 1.0f);
 			UE_LOG(LogTemp, Warning, TEXT("StartRotation : %f,%f,%f & TargetRotation : %f,%f,%f &changeRot : %f,%f,%f"), StartRotation.Roll, StartRotation.Pitch, StartRotation.Yaw, TargetRotation.Roll, TargetRotation.Pitch, TargetRotation.Yaw, changeRot.Roll, changeRot.Pitch, changeRot.Yaw);
 			muzzleMesh->SetRelativeRotation(changeRot);
 		}
@@ -103,8 +109,8 @@ void AWaterGunActor::Shoot()
 		muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
 		muzzleRotation = /*muzzleMesh->GetComponentRotation();*/meshComp->GetSocketRotation(TEXT("Muzzle"));
 		USkeletalMeshSocket const* mySocket = nullptr;
-		mySocket= meshComp->GetSocketByName(TEXT("Muzzle"));
-		
+		mySocket = meshComp->GetSocketByName(TEXT("Muzzle"));
+
 		WideShot(shotAngle);
 	}
 }
@@ -130,8 +136,37 @@ void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 	DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
 	if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, ECC_Visibility))
 	{
-		DrawDebugSphere(GetWorld(), hitInfo.ImpactPoint, 5, 8, FColor::White, false, 0.2f, 0, 0.3f);
-		player->decalComp->DecalShoot(hitInfo);
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(this);
+		params.bTraceComplex = true;
+		params.bReturnPhysicalMaterial = true;
+		FHitResult result2;
+
+		if (hitInfo.GetComponent()->LineTraceComponent(result2, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, params))
+		{
+			DrawDebugSphere(GetWorld(), result2.ImpactPoint, 5, 8, FColor::White, false, 0.2f, 0, 0.3f);
+			auto HitActor = Cast<AActor>(result2.GetActor());
+
+			URenderTargetProcess* renderComp = HitActor->GetComponentByClass<URenderTargetProcess>();
+			if (renderComp) renderComp->DrawCar(result2);
+			//***************************
+			/*FVector2D UV;
+			bool hit = UGameplayStatics::FindCollisionUV(result2, 0, UV);
+			UE_LOG(LogTemp, Warning, TEXT("UV Location: %s"), hit ? *FString("True") : *FString("False"));*/
+
+			//UPrimitiveComponent* HitPrimComp = hitInfo.Component.Get();
+			//if (HitPrimComp)
+			//{
+			//	UBodySetup* BodySetup = HitPrimComp->GetBodySetup();
+			//	if (BodySetup)
+			//	{
+			//		const FVector LocalHitPos = HitPrimComp->GetComponentToWorld().InverseTransformPosition(hitInfo.Location);
+			//		UE_LOG(LogTemp, Warning, TEXT("LocalHit Location: %.3f, %.3f, %.3f"), LocalHitPos.X, LocalHitPos.Y, LocalHitPos.Z);
+
+
+			//		bool bSuccess = BodySetup->CalcUVAtLocation(LocalHitPos, hitInfo.FaceIndex, 0, UV);
+			//		//UE_LOG(LogTemp, Warning, TEXT("UV Location: %s"), bSuccess ? *FString("True") : *FString("False"));
+		}
 	}
 }
 
@@ -148,11 +183,11 @@ void AWaterGunActor::shotRot()
 	if (horShot)horShot = false;
 	else horShot = true;
 	/*currRot = muzzleMesh->GetComponentRotation();*/
-	if (currRot.Pitch > 88) currRot.Pitch+= 90;
-	if(oneTime)
+	if (currRot.Pitch > 88) currRot.Pitch += 90;
+	if (oneTime)
 	{
 
-		TargetRotation = FRotator(StartRotation.Pitch , StartRotation.Yaw, StartRotation.Roll + 90.f);
+		TargetRotation = FRotator(StartRotation.Pitch, StartRotation.Yaw, StartRotation.Roll + 90.f);
 		UE_LOG(LogTemp, Warning, TEXT("oneTIme"));
 		oneTime = false;
 	}

@@ -23,6 +23,7 @@
 #include <../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h>
 #include "Components/WidgetInteractionComponent.h"
 #include "WidgetPointerComponent.h"
+#include "RenderTargetProcess.h"
 
 
 
@@ -75,7 +76,7 @@ AVRCharacter::AVRCharacter()
 	rightWidgetPointer->SetupAttachment(rightHand);
 	rightWidgetPointer->SetRelativeRotation(FRotator(0, 90, 0));
 
-	lineFx = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Line Effect"));//ÅÚ·¹Æ÷Æ® À§Ä¡±îÁö ÀÌ¾îÁö´Â ¼± ³ªÀÌ¾Æ°¡¶ó
+	lineFx = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Line Effect"));//ï¿½Ú·ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾Æ°ï¿½ï¿½ï¿½
 	lineFx->SetupAttachment(RootComponent);
 
 	bUseControllerRotationYaw = true;
@@ -83,16 +84,16 @@ AVRCharacter::AVRCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 
-	//ÄÄÆ÷³ÍÆ® ÆÐÅÏ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 	moveComp = CreateDefaultSubobject<UMoveComponent>(TEXT("Move Component"));
 	grabComp = CreateDefaultSubobject<UGrabComponent>(TEXT("Grab Component"));
 	handAnimComp = CreateDefaultSubobject<UHandAnimComponent>(TEXT("Hand Anim Component"));
 	shootComp = CreateDefaultSubobject<UShootComponent>(TEXT("Shoot Component"));
 
-	//LMH decal component Ãß°¡
-	decalComp = CreateDefaultSubobject<UDecalCompoenent>(TEXT("Decal Component"));
+	//LMH RenderTarget component ï¿½ß°ï¿½
+	//DrawComp = CreateDefaultSubobject<URenderTargetProcess>(TEXT("RenderTargerProcess Component"));
 
-	//À§Á¬ Æ÷ÀÎÅÍ ÄÄÆ÷³ÍÆ® Ãß°¡
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ß°ï¿½
 	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
 
 #pragma region key bind
@@ -152,11 +153,11 @@ void AVRCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// ¾ç¼Õ ·Î±× ÃÊ±âÈ­
+	// ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ ï¿½Ê±ï¿½È­
 	leftLog->SetText(FText::FromString("Left Log..."));
 	rightLog->SetText(FText::FromString("Right Log..."));
 
-	// ¸Ó¸® Àåºñ ±âÁØÁ¡ ¼³Á¤
+	// ï¿½Ó¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
 
 	pc = GetController<APlayerController>();
@@ -170,7 +171,7 @@ void AVRCharacter::BeginPlay()
 			subSys->AddMappingContext(imc_VRmap, 0);
 		}
 	}
-	//Å×½ºÆ® º¼ »ý¼º Ã¼Å©
+	//ï¿½×½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 	if(bIsTesting&&myBall_bp!=nullptr)
 	{
 		FActorSpawnParameters param;
@@ -181,7 +182,7 @@ void AVRCharacter::BeginPlay()
 		ball->AttachToComponent(leftMotionController, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	}
 
-	//¾ç ¼ÕÀÇ ¾Ö´Ï¸ÞÀÌ¼Ç ÀÎ½ºÅÏ½º °¡Á®¿À±â
+	//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	leftHandAnim = Cast<UHandAnimInstance>(leftHand->GetAnimInstance());
 	rightHandAnim = Cast<UHandAnimInstance>(rightHand->GetAnimInstance());
 
@@ -212,7 +213,7 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		widgetPointerComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 
 #pragma region inputTest
-		//¿À¸¥¼Õ ÄÁÆ®·Ñ·¯ ÀÔ·Â Å×½ºÆ® ¹ÙÀÎµù
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½Ô·ï¿½ ï¿½×½ï¿½Æ® ï¿½ï¿½ï¿½Îµï¿½
 		//enhancedInputComponent->BindAction(inputActions[0], ETriggerEvent::Started, this, &AVRCharacter::RightTriggerDown);
 		//enhancedInputComponent->BindAction(inputActions[0], ETriggerEvent::Completed, this, &AVRCharacter::RightTriggerUp);
 		//enhancedInputComponent->BindAction(inputActions[1], ETriggerEvent::Triggered, this, &AVRCharacter::RightTriggerValue);
@@ -229,9 +230,6 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		//enhancedInputComponent->BindAction(inputActions[8], ETriggerEvent::Completed, this, &AVRCharacter::RightBUp);
 		//enhancedInputComponent->BindAction(inputActions[9], ETriggerEvent::Started, this, &AVRCharacter::RightBTouch);
 #pragma endregion inputTest
-
-		//LMH Decal component Ãß°¡
-		decalComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 	}
 }
 
@@ -293,7 +291,7 @@ void AVRCharacter::RightADown()
 {
 	rightLog->SetText(FText::FromString("Right A Button Down!"));
 
-	//»ç¿ëÀÚ°¡ ¹Ù¶óº¸°í ÀÖ´Â ¹æÇâÀ» Á¤¸éÀ¸·Î ´Ù½Ã Á¤·Ä(È¸Àü, À§Ä¡)
+	//ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½(È¸ï¿½ï¿½, ï¿½ï¿½Ä¡)
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
