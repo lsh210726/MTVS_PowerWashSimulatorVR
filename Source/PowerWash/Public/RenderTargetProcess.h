@@ -43,4 +43,7 @@ public:
 
 	class AVRCharacter* player;
 	//void (FHitResult HitResult);
+
+
+	
 };

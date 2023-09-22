@@ -62,14 +62,24 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 		return;
 	}*/
 	/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%s"), *hitInfo.GetActor()->GetName()), true, FVector2D(1, 1));*/
-	FVector2D UV;
+
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%s"), *hitInfo.GetActor()->GetName()), true, FVector2D(1, 1));
+	
 	
 	//bool hit= player->IsHitFindCollisionUV(hitInfo, 0, UV);//UGameplayStatics::FindCollisionUV(hitInfo, 0, UV);
+	
+	FVector2D UV;
 	bool hit= UGameplayStatics::FindCollisionUV(hitInfo, 0, UV);
+
+	UE_LOG(LogTemp, Warning, TEXT("UV: %s"), hit ? *FString("True") : *FString("False"));
+
 	if (hit) 
 	{
-		//auto HitActor = Cast<AActor>(hitInfo.GetActor());
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("UV: %.2f, %.2f"), UV.X, UV.Y), true, FVector2D(1, 1));
+		UE_LOG(LogTemp, Warning, TEXT("UV: %.2f, %.2f"), UV.X, UV.Y);
+
 		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("111111")), true, FVector2D(1, 1));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
 
 		FDrawToRenderTargetContext context;
 		FLinearColor DrawLocation_color = UKismetMathLibrary::Conv_VectorToLinearColor(UKismetMathLibrary::Conv_Vector2DToVector(UV, 0.1));
