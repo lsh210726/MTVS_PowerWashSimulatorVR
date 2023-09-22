@@ -9,6 +9,9 @@
 #include "PickUpActor.h"
 #include <Components/TextRenderComponent.h>
 #include <Components/BoxComponent.h>
+#include "MuzzleActor.h"
+#include "WaterGunActor.h"
+
 
 // Sets default values for this component's properties
 UGrabComponent::UGrabComponent()
@@ -109,44 +112,92 @@ void UGrabComponent::GrabObject()
 	//}
 #pragma endregion
 
-	//overlapGrab
+#pragma region grabObj
+
+
+	////overlapGrab
+	//TArray<FOverlapResult> hitInfos;
+	//FVector startLoc = player->leftHand->GetComponentLocation();
+	//if (GetWorld()->OverlapMultiByProfile(hitInfos, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(30)))
+	//{
+	//	for (const FOverlapResult& hitInfo : hitInfos)
+	//	{
+	//		if (APickUpActor* pickObj = Cast<APickUpActor>(hitInfo.GetActor()))
+	//		{
+	//			pickObj->Grabbed(player->leftHand);
+	//			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Grab!"));
+	//			grabbedObject = pickObj;
+	//			player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
+	//			break;//만약 가장 가까운 것 하나만 잡고 싶은 경우 여기에 break을 걸 것
+	//		}
+	//		//UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+
+	//	}
+
+	//}
+	//DrawDebugSphere(GetWorld(), startLoc, 30, 12, FColor::Red, false, 1, 0, 0.1f);
+#pragma endregion
+
+		//overlapGrab
 	TArray<FOverlapResult> hitInfos;
 	FVector startLoc = player->leftHand->GetComponentLocation();
-	if (GetWorld()->OverlapMultiByProfile(hitInfos, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(30)))
+	if (GetWorld()->OverlapMultiByProfile(hitInfos, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(10)))
 	{
 		for (const FOverlapResult& hitInfo : hitInfos)
 		{
-			if (APickUpActor* pickObj = Cast<APickUpActor>(hitInfo.GetActor()))
+			if (AMuzzleActor* pickObj = Cast<AMuzzleActor>(hitInfo.GetActor()))
 			{
-				pickObj->Grabbed(player->leftHand);
-				//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Grab!"));
+				pickObj->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
+				pickObj->Attached(player->leftHand,"GrabPoint");
 				grabbedObject = pickObj;
+				
 				player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
 				break;//만약 가장 가까운 것 하나만 잡고 싶은 경우 여기에 break을 걸 것
+			UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
 			}
-			//UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
 
 		}
 
 	}
-	//DrawDebugSphere(GetWorld(), startLoc, 30, 12, FColor::Red, false, 1, 0, 0.1f);
+	DrawDebugSphere(GetWorld(), startLoc, 30, 12, FColor::Red, false, 1, 0, 0.1f);
 }
 
 void UGrabComponent::ReleaseObject()
 {
-	if(grabbedObject!=nullptr)
-	{
-		//물체를 손에서 분리하고 물리 능력을 활성화한다
-		grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
-		grabbedObject->boxComp->SetSimulatePhysics(true);
 
-		//물체의 던지는 방향에 따른 힘(선형, 회전력)을 가한다
-		if (!deltaLoc.IsNearlyZero())
+	//if(grabbedObject!=nullptr)
+	//{
+	//	//물체를 손에서 분리하고 물리 능력을 활성화한다
+	//	grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
+	//	grabbedObject->boxComp->SetSimulatePhysics(true);
+
+	//	//물체의 던지는 방향에 따른 힘(선형, 회전력)을 가한다
+	//	if (!deltaLoc.IsNearlyZero())
+	//	{
+	//		grabbedObject->boxComp->AddImpulse(deltaLoc.GetSafeNormal() * throwPower);
+	//		grabbedObject->boxComp->AddTorqueInRadians(deltaRot.GetRotationAxis() * rotSpeed);
+	//	}
+	//	grabbedObject = nullptr;
+	//}
+
+	TArray<FOverlapResult> hitInfos;
+	FVector startLoc = player->leftHand->GetComponentLocation();
+	if (GetWorld()->OverlapMultiByProfile(hitInfos, startLoc, FQuat::Identity, FName("PickUp"), FCollisionShape::MakeSphere(10)))
+	{
+		for (const FOverlapResult& hitInfo : hitInfos)
 		{
-			grabbedObject->boxComp->AddImpulse(deltaLoc.GetSafeNormal() * throwPower);
-			grabbedObject->boxComp->AddTorqueInRadians(deltaRot.GetRotationAxis() * rotSpeed);
+			if (AWaterGunActor* pickObj = Cast<AWaterGunActor>(hitInfo.GetActor()))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+				if (grabbedObject != nullptr)
+				{
+					grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
+					grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
+					grabbedObject = nullptr;
+				}
+				break;
+			}
 		}
-		grabbedObject = nullptr;
 	}
 }
 

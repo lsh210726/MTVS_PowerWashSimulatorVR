@@ -18,10 +18,12 @@ AWaterGunActor::AWaterGunActor()
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Component"));
 	SetRootComponent(boxComp);
+	boxComp->SetBoxExtent(FVector(10,35,18));
 	boxComp->SetSimulatePhysics(false);
 
 	meshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh Component"));
 	meshComp->SetupAttachment(RootComponent);
+	meshComp->SetRelativeLocation(FVector(0, -24, -5));
 	meshComp->SetSimulatePhysics(false);
 
 	muzzleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Muzzle Mesh"));

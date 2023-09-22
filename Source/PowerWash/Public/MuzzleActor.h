@@ -36,4 +36,5 @@ public:
 
 	void rotateEvent();
 	void rotateMuzzle();
+	void Attached(USkeletalMeshComponent* handMesh,const ANSICHAR* pointName);
 };

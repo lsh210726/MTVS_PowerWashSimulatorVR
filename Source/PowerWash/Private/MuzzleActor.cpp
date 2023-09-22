@@ -4,6 +4,7 @@
 #include "MuzzleActor.h"
 #include "VRCharacter.h"
 #include "WaterGunActor.h"
+#include <Components/SkeletalMeshComponent.h>
 
 
 // Sets default values
@@ -48,8 +49,16 @@ void AMuzzleActor::rotateEvent()
 
 void AMuzzleActor::rotateMuzzle()
 {
-	UE_LOG(LogTemp, Warning, TEXT("rotate"));
+	//UE_LOG(LogTemp, Warning, TEXT("rotate"));
 	meshComp->AddRelativeRotation(FRotator(0, 0, 1));
 	++rotCounter;
 }
+
+void AMuzzleActor::Attached(USkeletalMeshComponent* handMesh, const ANSICHAR* pointName )//붙일 스켈리탈메시, 붙일 소켓이름
+{
+	meshComp->SetSimulatePhysics(false);
+	AttachToComponent(handMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName(pointName));
+
+}
+
 
