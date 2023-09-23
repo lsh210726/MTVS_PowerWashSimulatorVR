@@ -23,7 +23,7 @@ URenderTargetProcess::URenderTargetProcess()
 	
 	BrushMaterialTemplates=CreateDefaultSubobject<UMaterial>(TEXT("Material"));
 
-	ConstructorHelpers::FObjectFinder<UMaterial> temp_mat(TEXT("/Game/LMH/protomap/WhiteBoardMarker.WhiteBoardMarker"));
+	ConstructorHelpers::FObjectFinder<UMaterial> temp_mat(TEXT("/Game/LMH/protomap/Brush.Brush"));
 	if (temp_mat.Succeeded()) BrushMaterialTemplates = temp_mat.Object;
 	
 	PaintingRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("PaintingRenderTarget"));
