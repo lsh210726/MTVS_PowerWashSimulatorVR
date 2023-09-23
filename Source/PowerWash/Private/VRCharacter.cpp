@@ -24,6 +24,7 @@
 #include "Components/WidgetInteractionComponent.h"
 #include "WidgetPointerComponent.h"
 #include "RenderTargetProcess.h"
+#include "Components/BoxComponent.h"
 
 
 
@@ -95,6 +96,31 @@ AVRCharacter::AVRCharacter()
 
 	//���� ������ ������Ʈ �߰�
 	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
+
+	muzzleHolder = CreateDefaultSubobject<UBoxComponent>(TEXT("MuzzleHolder"));
+	muzzleHolder->SetupAttachment(RootComponent);
+	muzzleHolder->SetWorldScale3D(FVector(0.5));
+	muzzleHolder->SetRelativeLocation(FVector(40, -50, 0));
+	muzzleHolder->SetCollisionProfileName(FName("OverlapAllDynamic"));
+
+	showMeUIPlace = CreateDefaultSubobject<UBoxComponent>(TEXT("ShowMeUIPlace"));//왼손이 이곳에 오버랩되면 UI가 나옴
+	showMeUIPlace->SetupAttachment(RootComponent);
+	showMeUIPlace->SetWorldScale3D(FVector(0.25,0.5,0.25));
+	showMeUIPlace->SetRelativeLocation(FVector(30, 0, -20));
+	//showMeUIPlace->SetCollisionProfileName(FName("OverlapAllDynamic"));
+	//showMeUIPlace->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);//몸에 오버랩 안되게
+
+	leftHandOverlapBox = CreateDefaultSubobject<UBoxComponent>(TEXT("LeftHandOverlapBox"));//손이 이상하게 오버랩이 안되서 박스를 붙이기
+	leftHandOverlapBox->SetupAttachment(leftMotionController);
+	leftHandOverlapBox->SetWorldScale3D(FVector(0.2));
+	leftHandOverlapBox->SetRelativeLocation(FVector(0, 0, -10));
+	leftHandOverlapBox->SetCollisionProfileName(FName("OverlapAllDynamic"));
+
+	GunHolder = CreateDefaultSubobject<UBoxComponent>(TEXT("GunHolder"));
+	GunHolder->SetupAttachment(RootComponent);
+	GunHolder->SetWorldScale3D(FVector(0.5));
+	GunHolder->SetRelativeLocation(FVector(40, 50, 0));
+	GunHolder->SetCollisionProfileName(FName("OverlapAllDynamic"));
 
 #pragma region key bind
 
@@ -189,6 +215,9 @@ void AVRCharacter::BeginPlay()
 	if (leftHandAnim != nullptr) leftHandAnim->isLeft = true;
 
 	if(rightHandAnim) rightHandAnim->PoseAlphaGrasp = 1.0f;
+
+	showMeUIPlace->OnComponentBeginOverlap.AddDynamic(this, &AVRCharacter::OnComponentBeginOverlap);
+	showMeUIPlace->OnComponentEndOverlap.AddDynamic(this, &AVRCharacter::OnOverlapEnd);
 }
 
 // Called every frame
@@ -231,6 +260,24 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		//enhancedInputComponent->BindAction(inputActions[9], ETriggerEvent::Started, this, &AVRCharacter::RightBTouch);
 #pragma endregion inputTest
 	}
+}
+
+void AVRCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UIOnOff();
+	UE_LOG(LogTemp, Warning, TEXT("Overlap Object : %s"),*OtherComp->GetName());
+
+}
+
+void AVRCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	UIOnOff();
+}
+
+void AVRCharacter::UIOnOff_Implementation()//오버랩될때 호출될 함수
+{
+	UE_LOG(LogTemp, Warning, TEXT("UI Show"));
+	//}
 }
 
 void AVRCharacter::RightTriggerDown()

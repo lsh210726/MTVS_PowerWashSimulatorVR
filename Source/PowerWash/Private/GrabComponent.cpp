@@ -145,6 +145,8 @@ void UGrabComponent::GrabObject()
 	{
 		for (const FOverlapResult& hitInfo : hitInfos)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+
 			if (AMuzzleActor* pickObj = Cast<AMuzzleActor>(hitInfo.GetActor()))
 			{
 				pickObj->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
@@ -152,14 +154,17 @@ void UGrabComponent::GrabObject()
 				grabbedObject = pickObj;
 				
 				player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
-				break;//만약 가장 가까운 것 하나만 잡고 싶은 경우 여기에 break을 걸 것
-			UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+				break;
+			}
+			else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//캐릭터의 머즐홀더 인식
+			{
+				UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder Grab"));
 			}
 
 		}
 
 	}
-	DrawDebugSphere(GetWorld(), startLoc, 30, 12, FColor::Red, false, 1, 0, 0.1f);
+	DrawDebugSphere(GetWorld(), startLoc, 10, 12, FColor::Red, false, 1, 0, 0.1f);
 }
 
 void UGrabComponent::ReleaseObject()
@@ -186,7 +191,7 @@ void UGrabComponent::ReleaseObject()
 	{
 		for (const FOverlapResult& hitInfo : hitInfos)
 		{
-			if (AWaterGunActor* pickObj = Cast<AWaterGunActor>(hitInfo.GetActor()))
+			if (AWaterGunActor* pickObj = Cast<AWaterGunActor>(hitInfo.GetActor()))//만약 물총에서 트리거를 놓았다면
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
 				if (grabbedObject != nullptr)
@@ -196,6 +201,11 @@ void UGrabComponent::ReleaseObject()
 					grabbedObject = nullptr;
 				}
 				break;
+			}
+			else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 머즐홀더에서 트리거를 놓았다면
+			{
+				UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder release"));
+
 			}
 		}
 	}

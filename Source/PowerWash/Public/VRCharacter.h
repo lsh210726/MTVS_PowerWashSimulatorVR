@@ -91,6 +91,27 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|MoveMent")
 	bool bHasGun = false;
 
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|VRInteraction")
+	class UBoxComponent* muzzleHolder;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|VRInteraction")
+	class UBoxComponent* showMeUIPlace;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|VRInteraction")
+	class UBoxComponent* leftHandOverlapBox;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|VRInteraction")
+	class UBoxComponent* GunHolder;
+
+	UFUNCTION()
+	void OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);//오버랩 끝날때
+
+	UFUNCTION(BlueprintNativeEvent)
+	void UIOnOff();
+
 	class APlayerController* pc;
 	class ABallActor* ball;
 	class UHandAnimInstance* leftHandAnim;
