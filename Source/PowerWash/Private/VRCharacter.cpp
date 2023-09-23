@@ -25,6 +25,7 @@
 #include "WidgetPointerComponent.h"
 #include "RenderTargetProcess.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 
 
 
@@ -114,13 +115,22 @@ AVRCharacter::AVRCharacter()
 	leftHandOverlapBox->SetupAttachment(leftMotionController);
 	leftHandOverlapBox->SetWorldScale3D(FVector(0.2));
 	leftHandOverlapBox->SetRelativeLocation(FVector(0, 0, -10));
-	leftHandOverlapBox->SetCollisionProfileName(FName("OverlapAllDynamic"));
+	leftHandOverlapBox->SetCollisionProfileName(FName("OverlapAllDynamic")); 
 
 	GunHolder = CreateDefaultSubobject<UBoxComponent>(TEXT("GunHolder"));
 	GunHolder->SetupAttachment(RootComponent);
 	GunHolder->SetWorldScale3D(FVector(0.5));
 	GunHolder->SetRelativeLocation(FVector(40, 50, 0));
 	GunHolder->SetCollisionProfileName(FName("OverlapAllDynamic"));
+
+	MenuUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Menu UI"));
+	MenuUI->SetupAttachment(RootComponent);
+	MenuUI->SetVisibility(true);
+	MenuUI->SetHiddenInGame(true);
+	MenuUI->SetWorldScale3D(FVector(0.1));
+	MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+	MenuUI->SetRelativeRotation(FRotator(0, 0, 180));
+
 
 #pragma region key bind
 
@@ -266,18 +276,32 @@ void AVRCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	UIOnOff();
 	UE_LOG(LogTemp, Warning, TEXT("Overlap Object : %s"),*OtherComp->GetName());
+	//if(MenuUI!=nullptr) MenuUI->SetVisibility(true);
+	if (MenuUI != nullptr)
+	{
+		MenuUI->SetHiddenInGame(false);
+		MenuUI->SetRelativeLocation(FVector(40, 0, 0));
+	}
+
 
 }
 
 void AVRCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	UIOnOff();
+	//if (MenuUI != nullptr) MenuUI->SetVisibility(false);
+	if (MenuUI != nullptr)
+	{
+		MenuUI->SetHiddenInGame(true);
+		MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+	}
+
+
 }
 
 void AVRCharacter::UIOnOff_Implementation()//오버랩될때 호출될 함수
 {
 	UE_LOG(LogTemp, Warning, TEXT("UI Show"));
-	//}
 }
 
 void AVRCharacter::RightTriggerDown()
