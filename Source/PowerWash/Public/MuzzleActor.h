@@ -30,6 +30,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MySettings|Components")
 	class UStaticMeshComponent* meshComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySettings|Material")
+	UMaterialInterface* material1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySettings|Material")
+	UMaterialInterface* material2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySettings|Material")
+	UMaterialInterface* material3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySettings|Material")
+	UMaterialInterface* material4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySettings|Material")
+	UMaterial* material;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySettings|Material")
+	UMaterialInstance* materialInstance;
+
 	class AWaterGunActor* waterGun;
 	int32 rotCounter = 0;
 	bool letsRotate = false;
@@ -37,4 +55,7 @@ public:
 	void rotateEvent();
 	void rotateMuzzle();
 	void Attached(USkeletalMeshComponent* handMesh,const ANSICHAR* pointName);
+
+	UFUNCTION()
+	void changeMaterial(int i);
 };

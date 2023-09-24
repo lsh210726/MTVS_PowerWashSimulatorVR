@@ -12,6 +12,8 @@
 #include <Kismet/BlueprintFunctionLibrary.h>
 #include "RenderTargetProcess.h"
 #include "Kismet/GameplayStatics.h"
+#include "MuzzleActor.h"
+
 
 
 
@@ -31,12 +33,12 @@ AWaterGunActor::AWaterGunActor()
 	meshComp->SetRelativeLocation(FVector(0, -24, -5));
 	meshComp->SetSimulatePhysics(false);
 
-	muzzleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Muzzle Mesh"));
-	muzzleMesh->SetupAttachment(meshComp);
-	muzzleMesh->SetSimulatePhysics(false);
-	arrowComp = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Comp"));
-	arrowComp->SetupAttachment(muzzleMesh);
-	arrowComp->SetSimulatePhysics(false);
+	//muzzleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Muzzle Mesh"));
+	//muzzleMesh->SetupAttachment(meshComp);
+	//muzzleMesh->SetSimulatePhysics(false);
+	//arrowComp = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Comp"));
+	//arrowComp->SetupAttachment(muzzleMesh);
+	//arrowComp->SetSimulatePhysics(false);
 }
 
 // Called when the game starts or when spawned
@@ -63,9 +65,9 @@ void AWaterGunActor::BeginPlay()
 		}
 	}
 
-	currRot = muzzleMesh->GetRelativeRotation();
+	//currRot = muzzleMesh->GetRelativeRotation();
 
-	StartRotation = muzzleMesh->GetRelativeRotation();
+	//StartRotation = muzzleMesh->GetRelativeRotation();
 	TargetRotation = StartRotation;
 
 	// 회전 시간 설정
@@ -85,31 +87,34 @@ void AWaterGunActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 
-	if (muzzleMesh)
-	{
-		StartRotation = muzzleMesh->GetRelativeRotation();
-		if (StartRotation.Roll <= TargetRotation.Roll)
-		{
-			auto changeRot = FRotator(StartRotation.Pitch, StartRotation.Yaw, StartRotation.Roll + 1.0f);
-			UE_LOG(LogTemp, Warning, TEXT("StartRotation : %f,%f,%f & TargetRotation : %f,%f,%f &changeRot : %f,%f,%f"), StartRotation.Roll, StartRotation.Pitch, StartRotation.Yaw, TargetRotation.Roll, TargetRotation.Pitch, TargetRotation.Yaw, changeRot.Roll, changeRot.Pitch, changeRot.Yaw);
-			muzzleMesh->SetRelativeRotation(changeRot);
-		}
+	//if (muzzleMesh)
+	//{
+	//	StartRotation = muzzleMesh->GetRelativeRotation();
+	//	if (StartRotation.Roll <= TargetRotation.Roll)
+	//	{
+	//		auto changeRot = FRotator(StartRotation.Pitch, StartRotation.Yaw, StartRotation.Roll + 1.0f);
+	//		UE_LOG(LogTemp, Warning, TEXT("StartRotation : %f,%f,%f & TargetRotation : %f,%f,%f &changeRot : %f,%f,%f"), StartRotation.Roll, StartRotation.Pitch, StartRotation.Yaw, TargetRotation.Roll, TargetRotation.Pitch, TargetRotation.Yaw, changeRot.Roll, changeRot.Pitch, changeRot.Yaw);
+	//		muzzleMesh->SetRelativeRotation(changeRot);
+	//	}
 
-		muzzleRotation = muzzleMesh->GetComponentRotation();//meshComp->GetSocketRotation(TEXT("Muzzle"));
+	//	muzzleRotation = muzzleMesh->GetComponentRotation();//meshComp->GetSocketRotation(TEXT("Muzzle"));
 
-	}
+	//}
 
 }
 
 void AWaterGunActor::Shoot()
 {
 	FHitResult hitInfo;
-	if (player->bHasGun && meshComp->DoesSocketExist(TEXT("Muzzle")))
+	if (player->bHasGun && /*meshComp->DoesSocketExist(TEXT("Muzzle"))&&*/ MuzzleActor!=nullptr)
 	{
-		muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
-		muzzleRotation = /*muzzleMesh->GetComponentRotation();*/meshComp->GetSocketRotation(TEXT("Muzzle"));
-		USkeletalMeshSocket const* mySocket = nullptr;
-		mySocket = meshComp->GetSocketByName(TEXT("Muzzle"));
+		//muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
+		//muzzleRotation = /*muzzleMesh->GetComponentRotation();*/meshComp->GetSocketRotation(TEXT("Muzzle"));
+		//USkeletalMeshSocket const* mySocket = nullptr;
+		//mySocket = meshComp->GetSocketByName(TEXT("Muzzle"));
+		muzzleLocation = MuzzleActor->GetActorLocation();
+		muzzleRotation = MuzzleActor->meshComp->GetComponentRotation();
+		//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleRotation.Pitch, muzzleRotation.Yaw, muzzleRotation.Roll);
 
 		WideShot(shotAngle);
 	}
@@ -124,6 +129,9 @@ void AWaterGunActor::WideShot(float degree)
 	for (int i = 0; i < shotTime; ++i)
 	{
 		muzzleFwdVec = muzzleRotation.Vector();
+		//muzzleFwdVec = FVector(muzzleRotation.Roll, muzzleRotation.Pitch, muzzleRotation.Yaw);
+		UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleRotation.Roll, muzzleRotation.Pitch, muzzleRotation.Yaw);
+		UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleFwdVec.X, muzzleFwdVec.Y, muzzleFwdVec.Z);
 		ShootWater(muzzleFwdVec);
 		if (!horShot) muzzleRotation.Pitch += degree / shotTime;
 		else muzzleRotation.Yaw += degree / shotTime;
@@ -134,6 +142,8 @@ void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 {
 	FHitResult hitInfo;
 	DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
+	//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleFwdVec.X, muzzleFwdVec.Y, muzzleFwdVec.Z);
+
 	if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, ECC_Visibility))
 	{
 		FCollisionQueryParams params;
@@ -183,14 +193,14 @@ void AWaterGunActor::shotRot()
 	if (horShot)horShot = false;
 	else horShot = true;
 	/*currRot = muzzleMesh->GetComponentRotation();*/
-	if (currRot.Pitch > 88) currRot.Pitch += 90;
-	if (oneTime)
-	{
+	//if (currRot.Pitch > 88) currRot.Pitch += 90;
+	//if (oneTime)
+	//{
 
-		TargetRotation = FRotator(StartRotation.Pitch, StartRotation.Yaw, StartRotation.Roll + 90.f);
-		UE_LOG(LogTemp, Warning, TEXT("oneTIme"));
-		oneTime = false;
-	}
+	//	TargetRotation = FRotator(StartRotation.Pitch, StartRotation.Yaw, StartRotation.Roll + 90.f);
+	//	UE_LOG(LogTemp, Warning, TEXT("oneTIme"));
+	//	oneTime = false;
+	//}
 
 }
 

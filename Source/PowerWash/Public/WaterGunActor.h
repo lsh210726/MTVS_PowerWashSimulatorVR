@@ -43,6 +43,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "MySettings|Components")//세로로 쏠지 가로로 쏠지
 	bool horShot = false;
 
+
 	FVector muzzleLocation;
 	FRotator muzzleRotation;
 	float shotAngle = 0;
@@ -54,6 +55,8 @@ public:
 	double StartTime = 0;
 
 	bool oneTime = true;
+
+	class AMuzzleActor* MuzzleActor;
 	
 
 	UFUNCTION()

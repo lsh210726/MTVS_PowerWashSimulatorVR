@@ -39,4 +39,9 @@ private:
 	void LB();
 	UFUNCTION()
 	void RB();
+
+private:
+	class AVRCharacter* player;
+	class AWaterGunActor* waterGun;
+	class AMuzzleActor* muzzle;
 };
