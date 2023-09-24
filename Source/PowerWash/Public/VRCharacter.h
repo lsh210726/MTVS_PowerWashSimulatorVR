@@ -74,7 +74,13 @@ public:
 	class UWidgetInteractionComponent* rightWidgetPointer;//VR 위젯 상호작용
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class UWidgetInteractionComponent* LeftWidgetPointer;//VR 위젯 상호작용
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class UWidgetPointerComponent* widgetPointerComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	class ULeftWidgetPointerComponent* leftWidgetPointerComp;
 
 	UPROPERTY(EditAnywhere, Category="MySettings|Inputs")
 	class UInputMappingContext* imc_VRmap;
@@ -114,6 +120,12 @@ public:
 
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);//오버랩 끝날때
+
+	UFUNCTION()
+	void OnComponentBeginOverlapLeft( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnOverlapEndLeft(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);//오버랩 끝날때
 
 	UFUNCTION(BlueprintNativeEvent)
 	void UIOnOff();

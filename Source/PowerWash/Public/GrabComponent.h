@@ -42,9 +42,10 @@ private:
 	FQuat prevRot;
 	FQuat deltaRot;
 
-
+	FTimerHandle TimerHandle;
 
 	void GrabObject();
 	void ReleaseObject();
 	void leftHandMove(const struct FInputActionValue& value);
+	void UIHider();
 };

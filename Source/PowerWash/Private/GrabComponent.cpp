@@ -159,15 +159,21 @@ void UGrabComponent::GrabObject()
 				player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
 				//break;
 			}
-			else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 캐릭터가 머즐홀더에서 손을 잡는다면
-			{
-				UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder Grab"));
-				if (player->bHasMuzzle)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("true"));
-					player->WheelUI->SetHiddenInGame(true);//휠위젯을 보여준다
-				}
-			}
+			//else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 캐릭터가 머즐홀더에서 손을 잡는다면
+			//{
+			//	UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder Grab"));
+			//	if (player->bHasMuzzle)
+			//	{
+			//		UE_LOG(LogTemp, Warning, TEXT("true"));
+			//		player->WheelUI->SetHiddenInGame(true);//휠위젯을 가린다
+			//		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGrabComponent::UIHider, 0.5f, false);
+			//		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+			//			{
+			//				player->WheelUI->SetHiddenInGame(true);//휠위젯을 가린다
+			//				UE_LOG(LogTemp, Warning, TEXT("UI Hide"));
+			//			});
+			//	}
+			//}
 
 		}
 
@@ -211,14 +217,14 @@ void UGrabComponent::ReleaseObject()
 				}
 				break;
 			}
-			else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 머즐홀더에서 트리거를 놓았다면
-			{
-				UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder release"));
-				if (player->bHasMuzzle)
-				{
-					player->WheelUI->SetHiddenInGame(false);//휠위젯을 보여준다
-				}
-			}
+			//else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 머즐홀더에서 트리거를 놓았다면
+			//{
+			//	UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder release"));
+			//	if (player->bHasMuzzle)
+			//	{
+			//		player->WheelUI->SetHiddenInGame(false);//휠위젯을 보여준다
+			//	}
+			//}
 		}
 	}
 }
@@ -227,5 +233,11 @@ void UGrabComponent::leftHandMove(const struct FInputActionValue& value)
 {
 	FVector direction = value.Get<FVector>();
 	player->leftMotionController->SetRelativeLocation(player->leftMotionController->GetRelativeLocation() + direction.GetSafeNormal());
+}
+
+void UGrabComponent::UIHider()
+{
+	player->WheelUI->SetHiddenInGame(true);//휠위젯을 가린다
+	UE_LOG(LogTemp, Warning, TEXT("UI Hide"));
 }
 

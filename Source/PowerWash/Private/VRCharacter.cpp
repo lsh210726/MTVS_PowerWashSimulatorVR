@@ -26,6 +26,8 @@
 #include "RenderTargetProcess.h"
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
+#include "LeftWidgetPointerComponent.h"
+
 
 
 
@@ -57,6 +59,10 @@ AVRCharacter::AVRCharacter()
 	leftLog->SetTextRenderColor(FColor(255, 255, 0, 255));
 	leftLog->SetHorizontalAlignment(EHTA_Center);
 	leftLog->SetVerticalAlignment(EVRTA_TextCenter);
+
+	LeftWidgetPointer = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("Left Widget Pointer"));
+	LeftWidgetPointer->SetupAttachment(leftHand);
+	LeftWidgetPointer->SetRelativeRotation(FRotator(0, 90, 0));
 
 	rightMotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("Right Motion Controller"));
 	rightMotionController->SetupAttachment(RootComponent);
@@ -97,6 +103,7 @@ AVRCharacter::AVRCharacter()
 
 	//���� ������ ������Ʈ �߰�
 	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
+	leftWidgetPointerComp = CreateDefaultSubobject<ULeftWidgetPointerComponent>(TEXT("Left Widget Pointer Component"));
 
 	muzzleHolder = CreateDefaultSubobject<UBoxComponent>(TEXT("MuzzleHolder"));
 	muzzleHolder->SetupAttachment(RootComponent);
@@ -237,6 +244,9 @@ void AVRCharacter::BeginPlay()
 
 	showMeUIPlace->OnComponentBeginOverlap.AddDynamic(this, &AVRCharacter::OnComponentBeginOverlap);
 	showMeUIPlace->OnComponentEndOverlap.AddDynamic(this, &AVRCharacter::OnOverlapEnd);
+
+	muzzleHolder->OnComponentBeginOverlap.AddDynamic(this, &AVRCharacter::OnComponentBeginOverlapLeft);
+	muzzleHolder->OnComponentEndOverlap.AddDynamic(this, &AVRCharacter::OnOverlapEndLeft);
 }
 
 // Called every frame
@@ -259,6 +269,7 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		handAnimComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 		shootComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 		widgetPointerComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
+		leftWidgetPointerComp->SetupPlayerInputComponent(enhancedInputComponent, inputActions);
 
 #pragma region inputTest
 		//������ ��Ʈ�ѷ� �Է� �׽�Ʈ ���ε�
@@ -305,6 +316,26 @@ void AVRCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		MenuUI->SetRelativeLocation(FVector(40, 0, 100));
 	}
 
+
+}
+
+void AVRCharacter::OnComponentBeginOverlapLeft(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (WheelUI != nullptr&&bHasMuzzle)
+	{
+		WheelUI->SetHiddenInGame(false);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("UI Show"));
+
+}
+
+void AVRCharacter::OnOverlapEndLeft(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (WheelUI != nullptr&&bHasMuzzle)
+	{
+		WheelUI->SetHiddenInGame(true);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("UI hide"));
 
 }
 
