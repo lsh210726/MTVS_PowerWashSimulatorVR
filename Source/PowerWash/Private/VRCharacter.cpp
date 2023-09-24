@@ -133,6 +133,12 @@ AVRCharacter::AVRCharacter()
 
 	WheelUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Wheel UI"));
 	WheelUI->SetupAttachment(muzzleHolder);
+	WheelUI->SetWorldScale3D(FVector(0.2));
+	WheelUI->SetRelativeRotation(FRotator(0, 0, 180));
+	WheelUI->SetVisibility(true);
+	WheelUI->SetHiddenInGame(true);
+	
+
 
 
 #pragma region key bind

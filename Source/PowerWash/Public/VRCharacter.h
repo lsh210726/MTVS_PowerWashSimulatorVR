@@ -123,6 +123,8 @@ public:
 	class UHandAnimInstance* leftHandAnim;
 	class UHandAnimInstance* rightHandAnim;
 
+	bool bHasMuzzle = false;
+
 public:
 // LMH Decal component 추가 -> 수정: RenderTarget으로 변경 << 이민하 작성
 	/*UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MySettings|Components")

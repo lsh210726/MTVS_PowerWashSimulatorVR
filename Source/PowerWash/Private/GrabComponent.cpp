@@ -11,6 +11,8 @@
 #include <Components/BoxComponent.h>
 #include "MuzzleActor.h"
 #include "WaterGunActor.h"
+#include "Components/WidgetComponent.h"
+
 
 
 // Sets default values for this component's properties
@@ -59,10 +61,10 @@ void UGrabComponent::SetupPlayerInputComponent(UEnhancedInputComponent* enhanced
 
 void UGrabComponent::GrabObject()
 {
-	if (grabbedObject != nullptr)
-	{
-		return;
-	}
+	//if (grabbedObject != nullptr)
+	//{
+	//	return;
+	//}
 
 
 #pragma region lineTrace Type
@@ -152,13 +154,19 @@ void UGrabComponent::GrabObject()
 				pickObj->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
 				pickObj->Attached(player->leftHand,"GrabPoint");
 				grabbedObject = pickObj;
+				player->bHasMuzzle = true;
 				
 				player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
-				break;
+				//break;
 			}
-			else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//캐릭터의 머즐홀더 인식
+			else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 캐릭터가 머즐홀더에서 손을 잡는다면
 			{
 				UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder Grab"));
+				if (player->bHasMuzzle)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("true"));
+					player->WheelUI->SetHiddenInGame(true);//휠위젯을 보여준다
+				}
 			}
 
 		}
@@ -199,13 +207,17 @@ void UGrabComponent::ReleaseObject()
 					grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
 					grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
 					grabbedObject = nullptr;
+					player->bHasMuzzle = false;
 				}
 				break;
 			}
 			else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 머즐홀더에서 트리거를 놓았다면
 			{
 				UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder release"));
-
+				if (player->bHasMuzzle)
+				{
+					player->WheelUI->SetHiddenInGame(false);//휠위젯을 보여준다
+				}
 			}
 		}
 	}
