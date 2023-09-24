@@ -131,6 +131,9 @@ AVRCharacter::AVRCharacter()
 	MenuUI->SetRelativeLocation(FVector(40, 0, 100));
 	MenuUI->SetRelativeRotation(FRotator(0, 0, 180));
 
+	WheelUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Wheel UI"));
+	WheelUI->SetupAttachment(muzzleHolder);
+
 
 #pragma region key bind
 
