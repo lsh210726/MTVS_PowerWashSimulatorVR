@@ -45,5 +45,7 @@ public:
 	//void (FHitResult HitResult);
 
 
+	void SetBrushOpacity(float op);
+
 	
 };

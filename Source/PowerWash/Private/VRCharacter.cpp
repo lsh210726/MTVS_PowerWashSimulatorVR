@@ -13,7 +13,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "MoveComponent.h"
 #include "BallActor.h"
-#include <../Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h>
 #include "GrabComponent.h"
 #include "HandAnimComponent.h"
 #include "DecalCompoenent.h"
@@ -28,7 +27,8 @@
 #include "Components/WidgetComponent.h"
 #include "LeftWidgetPointerComponent.h"
 #include "Containers/UnrealString.h"
-
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 
 
@@ -102,7 +102,7 @@ AVRCharacter::AVRCharacter()
 	//LMH RenderTarget component �߰�
 	//DrawComp = CreateDefaultSubobject<URenderTargetProcess>(TEXT("RenderTargerProcess Component"));
 
-	//���� ������ ������Ʈ �߰�
+	//���� ������ ������Ʈ �߰� 
 	widgetPointerComp = CreateDefaultSubobject<UWidgetPointerComponent>(TEXT("Widget Pointer Component"));
 	leftWidgetPointerComp = CreateDefaultSubobject<ULeftWidgetPointerComponent>(TEXT("Left Widget Pointer Component"));
 

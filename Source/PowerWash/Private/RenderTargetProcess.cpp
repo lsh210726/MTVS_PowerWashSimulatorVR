@@ -23,7 +23,7 @@ URenderTargetProcess::URenderTargetProcess()
 	
 	BrushMaterialTemplates=CreateDefaultSubobject<UMaterial>(TEXT("Material"));
 
-	ConstructorHelpers::FObjectFinder<UMaterial> temp_mat(TEXT("/Game/LMH/protomap/WhiteBoardMarker.WhiteBoardMarker"));
+	ConstructorHelpers::FObjectFinder<UMaterial> temp_mat(TEXT("/Game/LMH/protomap/Brush.Brush"));
 	if (temp_mat.Succeeded()) BrushMaterialTemplates = temp_mat.Object;
 	
 	PaintingRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("PaintingRenderTarget"));
@@ -63,7 +63,7 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 	}*/
 	/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%s"), *hitInfo.GetActor()->GetName()), true, FVector2D(1, 1));*/
 
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%s"), *hitInfo.GetActor()->GetName()), true, FVector2D(1, 1));
+	/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("%s"), *hitInfo.GetActor()->GetName()), true, FVector2D(1, 1));*/
 	
 	
 	//bool hit= player->IsHitFindCollisionUV(hitInfo, 0, UV);//UGameplayStatics::FindCollisionUV(hitInfo, 0, UV);
@@ -71,7 +71,7 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 	FVector2D UV;
 	bool hit= UGameplayStatics::FindCollisionUV(hitInfo, 0, UV);
 
-	UE_LOG(LogTemp, Warning, TEXT("UV: %s"), hit ? *FString("True") : *FString("False"));
+	//UE_LOG(LogTemp, Warning, TEXT("UV: %s"), hit ? *FString("True") : *FString("False"));
 
 	if (hit) 
 	{
@@ -79,7 +79,7 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 		UE_LOG(LogTemp, Warning, TEXT("UV: %.2f, %.2f"), UV.X, UV.Y);
 
 		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("111111")), true, FVector2D(1, 1));
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
 
 		FDrawToRenderTargetContext context;
 		FLinearColor DrawLocation_color = UKismetMathLibrary::Conv_VectorToLinearColor(UKismetMathLibrary::Conv_Vector2DToVector(UV, 0.1));
@@ -97,6 +97,13 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 void URenderTargetProcess::DrawSize(float drawSize)
 {
 	BrushMaterialInstance->SetScalarParameterValue(FName("Size"),drawSize);
+}
+
+void URenderTargetProcess::SetBrushOpacity(float op)
+{
+	if (op<=0 ) op=0;
+	else if(op>1) op=1;
+	BrushMaterialInstance->SetScalarParameterValue(FName("op"),op);
 }
 
 //void URenderTargetProcess::CopyToMainCanvas()
