@@ -42,13 +42,36 @@ void UGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	if (grabbedObject != nullptr)
-	{
-		deltaLoc = player->leftMotionController->GetComponentLocation() - prevLoc;//위치변화값
-		prevLoc = player->leftMotionController->GetComponentLocation();//이전위치값 갱신
+	//if (grabbedObject != nullptr)
+	//{
+	//	deltaLoc = player->leftMotionController->GetComponentLocation() - prevLoc;//위치변화값
+	//	prevLoc = player->leftMotionController->GetComponentLocation();//이전위치값 갱신
 
-		deltaRot = player->leftMotionController->GetComponentQuat() - prevRot.Inverse();
-		prevRot = player->leftMotionController->GetComponentQuat();
+	//	deltaRot = player->leftMotionController->GetComponentQuat() - prevRot.Inverse();
+	//	prevRot = player->leftMotionController->GetComponentQuat();
+	//}
+	if (isRot)
+	{
+		float f = player->leftHand->GetRelativeRotation().Roll - firstHandRot.Roll;
+		
+		if (f >= 30)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%f"), f);
+			isRot = false;
+			if(player->waterGun->MuzzleActor!=nullptr)player->waterGun->MuzzleActor->rotateEvent();
+			if (grabbedObject != nullptr)
+			{
+				grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
+				grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
+				grabbedObject = nullptr;
+				player->bHasMuzzle = false;
+				player->waterGun->shotRot();
+
+				//놓았을 떄 초기화
+				isRot = false;
+				//firstHandRot = player->leftHand->GetRelativeRotation();
+			}
+		}
 	}
 }
 
@@ -155,6 +178,10 @@ void UGrabComponent::GrabObject()
 				pickObj->Attached(player->leftHand,"GrabPoint");
 				grabbedObject = pickObj;
 				player->bHasMuzzle = true;
+
+				//잡았을 때 손 회전값 계산
+				isRot = true;
+				firstHandRot = player->leftHand->GetRelativeRotation();
 				
 				player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
 				//break;
@@ -214,6 +241,10 @@ void UGrabComponent::ReleaseObject()
 					grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
 					grabbedObject = nullptr;
 					player->bHasMuzzle = false;
+
+					//놓았을 떄 초기화
+					isRot = false;
+					//firstHandRot = player->leftHand->GetRelativeRotation();
 				}
 				break;
 			}

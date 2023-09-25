@@ -19,7 +19,7 @@ void UWheelWidget::NativeConstruct()
 	btn_RB->OnClicked.AddDynamic(this, &UWheelWidget::RB);
 
 	player = Cast<AVRCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	waterGun = player->waterGun;
+	if(player->bHasGun) waterGun = player->waterGun;
 	muzzle = waterGun->MuzzleActor;
 }
 

@@ -53,17 +53,19 @@ void AWaterGunActor::BeginPlay()
 
 	player = Cast<AVRCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
-	if (player)
-	{
-		if (player->rightHand)
-		{
-			AttachToComponent(player->rightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
-			player->bHasGun = true;
-			player->waterGun = this;
-			//if(player->waterGun != nullptr) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,*player->waterGun->GetName());
+	//if (player)
+	//{
+	//	if (player->rightHand)
+	//	{
+	//		AttachToComponent(player->rightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
+	//		player->bHasGun = true;
+	//		player->waterGun = this;
+	//		//if(player->waterGun != nullptr) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,*player->waterGun->GetName());
 
-		}
-	}
+	//	}
+	//}
+	player->waterGun = this;
+	grabReleseGun();
 
 	//currRot = muzzleMesh->GetRelativeRotation();
 
@@ -108,12 +110,12 @@ void AWaterGunActor::Shoot()
 	FHitResult hitInfo;
 	if (player->bHasGun && /*meshComp->DoesSocketExist(TEXT("Muzzle"))&&*/ MuzzleActor!=nullptr)
 	{
-		//muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
-		//muzzleRotation = /*muzzleMesh->GetComponentRotation();*/meshComp->GetSocketRotation(TEXT("Muzzle"));
-		//USkeletalMeshSocket const* mySocket = nullptr;
-		//mySocket = meshComp->GetSocketByName(TEXT("Muzzle"));
-		muzzleLocation = MuzzleActor->GetActorLocation();
-		muzzleRotation = MuzzleActor->meshComp->GetComponentRotation();
+		muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
+		muzzleRotation = /*muzzleMesh->GetComponentRotation();*/meshComp->GetSocketRotation(TEXT("Muzzle"));
+		USkeletalMeshSocket const* mySocket = nullptr;
+		mySocket = meshComp->GetSocketByName(TEXT("Muzzle"));
+		//muzzleLocation = MuzzleActor->GetActorLocation();
+		//muzzleRotation = MuzzleActor->meshComp->GetComponentRotation();
 		//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleRotation.Pitch, muzzleRotation.Yaw, muzzleRotation.Roll);
 
 		WideShot(shotAngle);
@@ -202,5 +204,33 @@ void AWaterGunActor::shotRot()
 	//	oneTime = false;
 	//}
 
+}
+
+void AWaterGunActor::grabReleseGun()
+{
+	if (player)
+	{
+		if (!player->bHasGun)
+		{
+			if (player->rightHand)
+			{
+				AttachToComponent(player->rightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
+				player->bHasGun = true;
+				//player->waterGun = this;
+				//if(player->waterGun != nullptr) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,*player->waterGun->GetName());
+				UE_LOG(LogTemp, Warning, TEXT("grabGun"));
+	
+			}
+		}
+		else
+		{
+			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			SetActorLocation(FVector(0));
+			UE_LOG(LogTemp, Warning, TEXT("NoGrabGun"));
+			player->bHasGun = false;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("grabReleseGunEventOn"));
+
+	}
 }
 

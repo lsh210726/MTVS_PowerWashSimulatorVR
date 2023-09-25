@@ -42,6 +42,10 @@ private:
 	FQuat prevRot;
 	FQuat deltaRot;
 
+	FRotator firstHandRot;
+	FRotator nowHandRot;
+	bool isRot = false;
+
 	FTimerHandle TimerHandle;
 
 	void GrabObject();

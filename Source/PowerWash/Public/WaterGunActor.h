@@ -66,6 +66,7 @@ public:
 	void ShootWater( FVector muzzleFwdVec);
 	void ChangeAngle();
 	void shotRot();
+	void grabReleseGun();
 
 
 

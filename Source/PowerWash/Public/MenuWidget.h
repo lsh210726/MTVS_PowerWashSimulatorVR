@@ -31,4 +31,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void GameStart();
 	
+	class AVRCharacter* player;
+
 };

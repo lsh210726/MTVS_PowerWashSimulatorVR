@@ -115,6 +115,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|UI")
 	class UWidgetComponent* WheelUI;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MySettings|UI")
+	class UTextRenderComponent* GameOverLog;
+
 	UFUNCTION()
 	void OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -130,12 +133,15 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void UIOnOff();
 
+	void mainMenuOnOff();
+
 	class APlayerController* pc;
 	class ABallActor* ball;
 	class UHandAnimInstance* leftHandAnim;
 	class UHandAnimInstance* rightHandAnim;
 
 	bool bHasMuzzle = false;
+	float gameTime = 0;
 
 public:
 // LMH Decal component 추가 -> 수정: RenderTarget으로 변경 << 이민하 작성

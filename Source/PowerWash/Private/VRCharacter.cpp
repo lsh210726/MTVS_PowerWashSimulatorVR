@@ -27,6 +27,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 #include "LeftWidgetPointerComponent.h"
+#include "Containers/UnrealString.h"
 
 
 
@@ -112,7 +113,7 @@ AVRCharacter::AVRCharacter()
 	muzzleHolder->SetCollisionProfileName(FName("OverlapAllDynamic"));
 
 	showMeUIPlace = CreateDefaultSubobject<UBoxComponent>(TEXT("ShowMeUIPlace"));//왼손이 이곳에 오버랩되면 UI가 나옴
-	showMeUIPlace->SetupAttachment(RootComponent);
+	showMeUIPlace->SetupAttachment(hmdCam);
 	showMeUIPlace->SetWorldScale3D(FVector(0.25,0.5,0.25));
 	showMeUIPlace->SetRelativeLocation(FVector(30, 0, -20));
 	//showMeUIPlace->SetCollisionProfileName(FName("OverlapAllDynamic"));
@@ -125,13 +126,13 @@ AVRCharacter::AVRCharacter()
 	leftHandOverlapBox->SetCollisionProfileName(FName("OverlapAllDynamic")); 
 
 	GunHolder = CreateDefaultSubobject<UBoxComponent>(TEXT("GunHolder"));
-	GunHolder->SetupAttachment(RootComponent);
+	GunHolder->SetupAttachment(hmdCam);
 	GunHolder->SetWorldScale3D(FVector(0.5));
 	GunHolder->SetRelativeLocation(FVector(40, 50, 0));
 	GunHolder->SetCollisionProfileName(FName("OverlapAllDynamic"));
 
 	MenuUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Menu UI"));
-	MenuUI->SetupAttachment(RootComponent);
+	MenuUI->SetupAttachment(hmdCam);
 	MenuUI->SetVisibility(true);
 	MenuUI->SetHiddenInGame(true);
 	MenuUI->SetWorldScale3D(FVector(0.1));
@@ -145,7 +146,15 @@ AVRCharacter::AVRCharacter()
 	WheelUI->SetVisibility(true);
 	WheelUI->SetHiddenInGame(true);
 	
-
+	GameOverLog = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Game Over Log"));
+	GameOverLog->SetupAttachment(hmdCam);
+	GameOverLog->SetRelativeLocation(FVector(30, 0, 0));
+	GameOverLog->SetRelativeRotation(FRotator(0, 180, 0));
+	GameOverLog->SetWorldSize(15);
+	GameOverLog->SetTextRenderColor(FColor(255, 255, 0, 255));
+	GameOverLog->SetHorizontalAlignment(EHTA_Center);
+	GameOverLog->SetVerticalAlignment(EVRTA_TextCenter);
+	GameOverLog->SetVisibility(false);
 
 
 #pragma region key bind
@@ -208,6 +217,7 @@ void AVRCharacter::BeginPlay()
 	// ��� �α� �ʱ�ȭ
 	leftLog->SetText(FText::FromString("Left Log..."));
 	rightLog->SetText(FText::FromString("Right Log..."));
+	GameOverLog->SetText(FText::FromString("You Lose!"));
 
 	// �Ӹ� ��� ������ ����
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
@@ -253,7 +263,10 @@ void AVRCharacter::BeginPlay()
 void AVRCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	/*FString MyFloatAsString = FString::Printf(TEXT("%.2f"), gameTime);
+	FText MyFloatAsText = FText::FromString(MyFloatAsString);;
+	leftLog->SetText(MyFloatAsText);
+	gameTime += DeltaTime;*/
 }
 
 // Called to bind functionality to input
@@ -290,6 +303,8 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		//enhancedInputComponent->BindAction(inputActions[9], ETriggerEvent::Started, this, &AVRCharacter::RightBTouch);
 #pragma endregion inputTest
 	}
+	enhancedInputComponent->BindAction(inputActions[10], ETriggerEvent::Started, this, &AVRCharacter::mainMenuOnOff);
+
 }
 
 void AVRCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -297,11 +312,11 @@ void AVRCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	UIOnOff();
 	UE_LOG(LogTemp, Warning, TEXT("Overlap Object : %s"),*OtherComp->GetName());
 	//if(MenuUI!=nullptr) MenuUI->SetVisibility(true);
-	if (MenuUI != nullptr)
-	{
-		MenuUI->SetHiddenInGame(false);
-		MenuUI->SetRelativeLocation(FVector(40, 0, 0));
-	}
+	//if (MenuUI != nullptr)
+	//{
+	//	MenuUI->SetHiddenInGame(false);
+	//	MenuUI->SetRelativeLocation(FVector(40, 0, 0));
+	//}
 
 
 }
@@ -310,11 +325,11 @@ void AVRCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	UIOnOff();
 	//if (MenuUI != nullptr) MenuUI->SetVisibility(false);
-	if (MenuUI != nullptr)
-	{
-		MenuUI->SetHiddenInGame(true);
-		MenuUI->SetRelativeLocation(FVector(40, 0, 100));
-	}
+	//if (MenuUI != nullptr)
+	//{
+	//	MenuUI->SetHiddenInGame(true);
+	//	MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+	//}
 
 
 }
@@ -342,6 +357,32 @@ void AVRCharacter::OnOverlapEndLeft(UPrimitiveComponent* OverlappedComp, AActor*
 void AVRCharacter::UIOnOff_Implementation()//오버랩될때 호출될 함수
 {
 	UE_LOG(LogTemp, Warning, TEXT("UI Show"));
+}
+
+void AVRCharacter::mainMenuOnOff()
+{
+	if (MenuUI != nullptr&&MenuUI->bHiddenInGame)
+	{
+		//MenuUI->SetHiddenInGame(false);
+		if (MenuUI != nullptr)
+		{
+			MenuUI->SetHiddenInGame(false);
+			MenuUI->SetRelativeLocation(FVector(40, 0, 0));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("UI Show"));
+
+	}
+	else if (MenuUI != nullptr && !MenuUI->bHiddenInGame)
+	{
+		//MenuUI->SetHiddenInGame(true);
+		if (MenuUI != nullptr)
+		{
+			MenuUI->SetHiddenInGame(true);
+			MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("UI hide"));
+
+	}
 }
 
 void AVRCharacter::RightTriggerDown()

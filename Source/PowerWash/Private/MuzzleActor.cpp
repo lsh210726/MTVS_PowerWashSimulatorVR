@@ -32,7 +32,7 @@ void AMuzzleActor::BeginPlay()
 		waterGun = player->waterGun;
 		AttachToComponent(waterGun->meshComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Muzzle"));
 		waterGun->MuzzleActor = this;
-		GetWorldTimerManager().SetTimer(MyTimerHandle, this, &AMuzzleActor::rotateEvent, 2.8f, true);//2.8초에 한번씩 회전시키기
+		//GetWorldTimerManager().SetTimer(MyTimerHandle, this, &AMuzzleActor::rotateEvent, 2.8f, true);//2.8초에 한번씩 회전시키기
 	}
 
 	meshComp->SetMaterial(0, material1);
@@ -65,7 +65,10 @@ void AMuzzleActor::rotateMuzzle()
 void AMuzzleActor::Attached(USkeletalMeshComponent* handMesh, const ANSICHAR* pointName )//붙일 스켈리탈메시, 붙일 소켓이름
 {
 	meshComp->SetSimulatePhysics(false);
-	AttachToComponent(handMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName(pointName));
+	//AttachToComponent(handMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName(pointName));
+	AttachToComponent(handMesh, FAttachmentTransformRules::KeepWorldTransform, FName(pointName));
+	SetActorLocation(handMesh->GetSocketLocation(pointName));
+	
 
 }
 
