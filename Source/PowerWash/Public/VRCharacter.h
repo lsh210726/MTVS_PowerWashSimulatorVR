@@ -65,6 +65,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
 	class UHandAnimComponent* handAnimComp;
 
+	//UPROPERTY(EditAnywhere, Category = "MySettings|Components")
+	UPROPERTY(EditAnywhere)
 	class UShootComponent* shootComp;//¹°ÃÑ½î±â
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")

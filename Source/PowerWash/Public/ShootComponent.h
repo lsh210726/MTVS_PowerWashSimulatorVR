@@ -26,6 +26,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions);
 	void RighttTriggerDown();
+	void OnNiagaraEffect();    //이민하 추가
+	void OffNiagaraEffect();    //이민하 추가
 	void RightHandMove(const struct FInputActionValue& value);
 	void ChangeAngle();
 	void ShowUI();
@@ -40,6 +42,11 @@ public:
 
 	class AVRCharacter* player;
 
-
-		
+//이민하 코드추가
+public:
+	UPROPERTY(EditAnywhere,Category="MySettings|Effects")
+    class UNiagaraSystem* NGShootMuzzle;
+	
+	UPROPERTY(VisibleAnywhere,Category="MySettings|Effects")
+	class UNiagaraComponent* NiagaraComp;
 };

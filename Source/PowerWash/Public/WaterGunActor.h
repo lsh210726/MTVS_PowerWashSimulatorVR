@@ -32,7 +32,7 @@ public:
 	class UBoxComponent* boxComp;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,  Category="MySettings|Components")
 	class USkeletalMeshComponent* meshComp;
-	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="MySettings|Components")
 	class UStaticMeshComponent* muzzleMesh;
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
 	class UArrowComponent* arrowComp;

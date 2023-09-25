@@ -7,6 +7,10 @@
 #include "VRCharacter.h"
 #include "MotionControllerComponent.h"
 #include "WaterGunActor.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include <Kismet/KismetMathLibrary.h>
+
 
 
 // Sets default values for this component's properties
@@ -15,7 +19,8 @@ UShootComponent::UShootComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	//NGShootMuzzle = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
+	//NGShooComp->SetupAttachment(RootComponent);
 	// ...
 }
 
@@ -27,7 +32,14 @@ void UShootComponent::BeginPlay()
 
 	// ...
 	player = GetOwner<AVRCharacter>();
+	//if (NGShootMuzzle) {
+	//	// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
+	//	NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NGShootMuzzle, player->waterGun->muzzleMesh, NAME_None, FVector(0.f), UKismetMathLibrary::MakeRotFromX(player->waterGun->muzzleMesh->GetForwardVector()), EAttachLocation::Type::SnapToTarget, true);
 
+	//	NiagaraComp->SetVisibility(false);
+	//}
+
+	// UKismetMathLibrary::MakeRotFromX(player->waterGun->muzzleMesh->GetRightVector())
 }
 
 
@@ -42,7 +54,9 @@ void UShootComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 void UShootComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions)
 {
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Triggered, this, &UShootComponent::RighttTriggerDown);
+	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UShootComponent::OnNiagaraEffect);
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UShootComponent::RighttTriggerDown);
+	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UShootComponent::OffNiagaraEffect);
 	enhancedInputComponent->BindAction(inputActions[7], ETriggerEvent::Triggered, this, &UShootComponent::RightHandMove);
 	enhancedInputComponent->BindAction(inputActions[8], ETriggerEvent::Triggered, this, &UShootComponent::HorShot);
 	enhancedInputComponent->BindAction(inputActions[9], ETriggerEvent::Triggered, this, &UShootComponent::ChangeAngle);
@@ -55,6 +69,22 @@ void UShootComponent::RighttTriggerDown()
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("Fire"));
 	if (player->bHasGun)player->waterGun->Shoot();
+}
+
+//이민하 추가, NiagaraEffect visiblity 조절
+void UShootComponent::OnNiagaraEffect()
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("111111111"));
+	//NiagaraComp->SetVisibility(true);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
+		// Parameters can be set like this (see documentation for further info) - the names and type must match the user exposed parameter in the Niagara System
+		//NiagaraComp->SetNiagaraVariableFloat(FString("StrengthCoef"), CoefStrength);
+	 
+}
+
+void UShootComponent::OffNiagaraEffect()
+{
+	//
 }
 
 void UShootComponent::RightHandMove(const struct FInputActionValue& value)
