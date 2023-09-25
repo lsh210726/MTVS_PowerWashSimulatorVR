@@ -83,3 +83,7 @@ Content/BeachScene/Textures/Environment/T_Curb02_N.uasset
 Content/BeachScene/Textures/Environment/T_Curb_BC.uasset
 Content/BeachScene/Textures/Environment/T_Curb_N.uasset
 Content/BeachScene/Textures/Environment/T_Rock_N.uasset
+
+*.zip
+
+Content/Downtown_West/*

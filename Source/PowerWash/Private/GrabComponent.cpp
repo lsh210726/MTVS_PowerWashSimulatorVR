@@ -11,6 +11,8 @@
 #include <Components/BoxComponent.h>
 #include "MuzzleActor.h"
 #include "WaterGunActor.h"
+#include "Components/WidgetComponent.h"
+
 
 
 // Sets default values for this component's properties
@@ -40,13 +42,36 @@ void UGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	if (grabbedObject != nullptr)
-	{
-		deltaLoc = player->leftMotionController->GetComponentLocation() - prevLoc;//위치변화값
-		prevLoc = player->leftMotionController->GetComponentLocation();//이전위치값 갱신
+	//if (grabbedObject != nullptr)
+	//{
+	//	deltaLoc = player->leftMotionController->GetComponentLocation() - prevLoc;//위치변화값
+	//	prevLoc = player->leftMotionController->GetComponentLocation();//이전위치값 갱신
 
-		deltaRot = player->leftMotionController->GetComponentQuat() - prevRot.Inverse();
-		prevRot = player->leftMotionController->GetComponentQuat();
+	//	deltaRot = player->leftMotionController->GetComponentQuat() - prevRot.Inverse();
+	//	prevRot = player->leftMotionController->GetComponentQuat();
+	//}
+	if (isRot)
+	{
+		float f = player->leftHand->GetRelativeRotation().Roll - firstHandRot.Roll;
+		
+		if (f >= 30)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%f"), f);
+			isRot = false;
+			if(player->waterGun->MuzzleActor!=nullptr)player->waterGun->MuzzleActor->rotateEvent();
+			if (grabbedObject != nullptr)
+			{
+				grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
+				grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
+				grabbedObject = nullptr;
+				player->bHasMuzzle = false;
+				player->waterGun->shotRot();
+
+				//놓았을 떄 초기화
+				isRot = false;
+				//firstHandRot = player->leftHand->GetRelativeRotation();
+			}
+		}
 	}
 }
 
@@ -59,10 +84,10 @@ void UGrabComponent::SetupPlayerInputComponent(UEnhancedInputComponent* enhanced
 
 void UGrabComponent::GrabObject()
 {
-	if (grabbedObject != nullptr)
-	{
-		return;
-	}
+	//if (grabbedObject != nullptr)
+	//{
+	//	return;
+	//}
 
 
 #pragma region lineTrace Type
@@ -145,21 +170,42 @@ void UGrabComponent::GrabObject()
 	{
 		for (const FOverlapResult& hitInfo : hitInfos)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+
 			if (AMuzzleActor* pickObj = Cast<AMuzzleActor>(hitInfo.GetActor()))
 			{
 				pickObj->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
 				pickObj->Attached(player->leftHand,"GrabPoint");
 				grabbedObject = pickObj;
+				player->bHasMuzzle = true;
+
+				//잡았을 때 손 회전값 계산
+				isRot = true;
+				firstHandRot = player->leftHand->GetRelativeRotation();
 				
 				player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
-				break;//만약 가장 가까운 것 하나만 잡고 싶은 경우 여기에 break을 걸 것
-			UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+				//break;
 			}
+			//else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 캐릭터가 머즐홀더에서 손을 잡는다면
+			//{
+			//	UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder Grab"));
+			//	if (player->bHasMuzzle)
+			//	{
+			//		UE_LOG(LogTemp, Warning, TEXT("true"));
+			//		player->WheelUI->SetHiddenInGame(true);//휠위젯을 가린다
+			//		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UGrabComponent::UIHider, 0.5f, false);
+			//		GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
+			//			{
+			//				player->WheelUI->SetHiddenInGame(true);//휠위젯을 가린다
+			//				UE_LOG(LogTemp, Warning, TEXT("UI Hide"));
+			//			});
+			//	}
+			//}
 
 		}
 
 	}
-	DrawDebugSphere(GetWorld(), startLoc, 30, 12, FColor::Red, false, 1, 0, 0.1f);
+	DrawDebugSphere(GetWorld(), startLoc, 10, 12, FColor::Red, false, 1, 0, 0.1f);
 }
 
 void UGrabComponent::ReleaseObject()
@@ -186,7 +232,7 @@ void UGrabComponent::ReleaseObject()
 	{
 		for (const FOverlapResult& hitInfo : hitInfos)
 		{
-			if (AWaterGunActor* pickObj = Cast<AWaterGunActor>(hitInfo.GetActor()))
+			if (AWaterGunActor* pickObj = Cast<AWaterGunActor>(hitInfo.GetActor()))//만약 물총에서 트리거를 놓았다면
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
 				if (grabbedObject != nullptr)
@@ -194,9 +240,22 @@ void UGrabComponent::ReleaseObject()
 					grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
 					grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
 					grabbedObject = nullptr;
+					player->bHasMuzzle = false;
+
+					//놓았을 떄 초기화
+					isRot = false;
+					//firstHandRot = player->leftHand->GetRelativeRotation();
 				}
 				break;
 			}
+			//else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 머즐홀더에서 트리거를 놓았다면
+			//{
+			//	UE_LOG(LogTemp, Warning, TEXT("MuzzleHolder release"));
+			//	if (player->bHasMuzzle)
+			//	{
+			//		player->WheelUI->SetHiddenInGame(false);//휠위젯을 보여준다
+			//	}
+			//}
 		}
 	}
 }
@@ -205,5 +264,11 @@ void UGrabComponent::leftHandMove(const struct FInputActionValue& value)
 {
 	FVector direction = value.Get<FVector>();
 	player->leftMotionController->SetRelativeLocation(player->leftMotionController->GetRelativeLocation() + direction.GetSafeNormal());
+}
+
+void UGrabComponent::UIHider()
+{
+	player->WheelUI->SetHiddenInGame(true);//휠위젯을 가린다
+	UE_LOG(LogTemp, Warning, TEXT("UI Hide"));
 }
 

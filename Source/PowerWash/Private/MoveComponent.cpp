@@ -86,7 +86,7 @@ void UMoveComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* en
 void UMoveComponent::Move(const FInputActionValue& value)
 {
 	FVector2D controllerInput = value.Get<FVector2D>();
-	player->leftLog->SetText(FText::FromString(FString::Printf(TEXT("x: %.2f\r\ny: %.2f"), controllerInput.X, controllerInput.Y)));
+	//player->leftLog->SetText(FText::FromString(FString::Printf(TEXT("x: %.2f\r\ny: %.2f"), controllerInput.X, controllerInput.Y)));
 
 	FVector forwardVec = FRotationMatrix(player->pc->GetControlRotation()).GetUnitAxis(EAxis::X);
 	FVector rightVec = FRotationMatrix(player->pc->GetControlRotation()).GetUnitAxis(EAxis::Y);
