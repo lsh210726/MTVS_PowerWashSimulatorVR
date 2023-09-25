@@ -75,8 +75,8 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 
 	if (hit) 
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("UV: %.2f, %.2f"), UV.X, UV.Y), true, FVector2D(1, 1));
-		UE_LOG(LogTemp, Warning, TEXT("UV: %.2f, %.2f"), UV.X, UV.Y);
+// 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("UV: %.2f, %.2f"), UV.X, UV.Y), true, FVector2D(1, 1));
+// 		UE_LOG(LogTemp, Warning, TEXT("UV: %.2f, %.2f"), UV.X, UV.Y);
 
 		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("111111")), true, FVector2D(1, 1));
 		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
