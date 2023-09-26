@@ -135,6 +135,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void UIOnOff();
 
+	UFUNCTION(BlueprintNativeEvent)
 	void mainMenuOnOff();
 
 	class APlayerController* pc;

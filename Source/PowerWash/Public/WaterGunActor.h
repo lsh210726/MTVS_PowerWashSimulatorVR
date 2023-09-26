@@ -39,7 +39,7 @@ public:
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")//물줄기 거리
 	float shootPower=300;
 	UPROPERTY(EditAnywhere, Category="MySettings|Components")//넓게 쏠 때 발사할 물줄기 개수
-	int shotTime=10;
+	int shotTime=20;
 	UPROPERTY(EditAnywhere, Category = "MySettings|Components")//세로로 쏠지 가로로 쏠지
 	bool horShot = false;
 

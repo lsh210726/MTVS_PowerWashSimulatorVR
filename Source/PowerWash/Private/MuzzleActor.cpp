@@ -65,9 +65,9 @@ void AMuzzleActor::rotateMuzzle()
 void AMuzzleActor::Attached(USkeletalMeshComponent* handMesh, const ANSICHAR* pointName )//붙일 스켈리탈메시, 붙일 소켓이름
 {
 	meshComp->SetSimulatePhysics(false);
-	//AttachToComponent(handMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName(pointName));
-	AttachToComponent(handMesh, FAttachmentTransformRules::KeepWorldTransform, FName(pointName));
-	SetActorLocation(handMesh->GetSocketLocation(pointName));
+	AttachToComponent(handMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName(pointName));
+	//AttachToComponent(handMesh, FAttachmentTransformRules::KeepWorldTransform, FName(pointName));
+	//SetActorLocation(handMesh->GetSocketLocation(pointName));
 	
 
 }

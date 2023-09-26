@@ -359,30 +359,32 @@ void AVRCharacter::UIOnOff_Implementation()//오버랩될때 호출될 함수
 	UE_LOG(LogTemp, Warning, TEXT("UI Show"));
 }
 
-void AVRCharacter::mainMenuOnOff()
+void AVRCharacter::mainMenuOnOff_Implementation()
 {
-	if (MenuUI != nullptr&&MenuUI->bHiddenInGame)
-	{
-		//MenuUI->SetHiddenInGame(false);
-		if (MenuUI != nullptr)
-		{
-			MenuUI->SetHiddenInGame(false);
-			MenuUI->SetRelativeLocation(FVector(40, 0, 0));
-		}
-		UE_LOG(LogTemp, Warning, TEXT("UI Show"));
+	//if (MenuUI != nullptr&&MenuUI->bHiddenInGame)
+	//{
+	//	//MenuUI->SetHiddenInGame(false);
+	//	if (MenuUI != nullptr)
+	//	{
+	//		MenuUI->SetHiddenInGame(false);
+	//		MenuUI->SetRelativeLocation(FVector(40, 0, 0));
+	//	}
+	//	UE_LOG(LogTemp, Warning, TEXT("UI Show"));
 
-	}
-	else if (MenuUI != nullptr && !MenuUI->bHiddenInGame)
-	{
-		//MenuUI->SetHiddenInGame(true);
-		if (MenuUI != nullptr)
-		{
-			MenuUI->SetHiddenInGame(true);
-			MenuUI->SetRelativeLocation(FVector(40, 0, 100));
-		}
-		UE_LOG(LogTemp, Warning, TEXT("UI hide"));
+	//}
+	//else if (MenuUI != nullptr && !MenuUI->bHiddenInGame)
+	//{
+	//	//MenuUI->SetHiddenInGame(true);
+	//	if (MenuUI != nullptr)
+	//	{
+	//		MenuUI->SetHiddenInGame(true);
+	//		MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+	//	}
+	//	UE_LOG(LogTemp, Warning, TEXT("UI hide"));
 
-	}
+	//}
+	//메인 메뉴 안 들어가고 바로 빌드로 들어가도록
+	if (waterGun != nullptr) waterGun->grabReleseGun();
 }
 
 void AVRCharacter::RightTriggerDown()
