@@ -95,40 +95,46 @@ void UShootComponent::RightHandMove(const struct FInputActionValue& value)
 
 
 
-	FVector2D AxisValues = value.Get<FVector2D>();
-	//UE_LOG(LogTemp, Warning, TEXT("value : %f , %f"), AxisValues.X,AxisValues.Y);
+	//FVector2D AxisValues = value.Get<FVector2D>();
+	////UE_LOG(LogTemp, Warning, TEXT("value : %f , %f"), AxisValues.X,AxisValues.Y);
 
-	if (player && player->rightMotionController)
-	{
-		// 회전 속도 설정
-		float RotationSpeed = 100.f;
+	//if (player && player->rightMotionController)
+	//{
+	//	// 회전 속도 설정
+	//	float RotationSpeed = 100.f;
 
-		// Delta 시간과 함께 사용하여 실제 게임에서 부드럽게 작동하도록 함
-		float YawRotationAmount = AxisValues.X * RotationSpeed * GetWorld()->GetDeltaSeconds();
-		float PitchRotationAmount = AxisValues.Y * RotationSpeed * GetWorld()->GetDeltaSeconds();
+	//	// Delta 시간과 함께 사용하여 실제 게임에서 부드럽게 작동하도록 함
+	//	float YawRotationAmount = AxisValues.X * RotationSpeed * GetWorld()->GetDeltaSeconds();
+	//	float PitchRotationAmount = AxisValues.Y * RotationSpeed * GetWorld()->GetDeltaSeconds();
 
-		// 현재 액터의 상대적인 로테이션 가져오기
-		FRotator CurrentRotation = player->rightMotionController->GetRelativeRotation();
+	//	// 현재 액터의 상대적인 로테이션 가져오기
+	//	FRotator CurrentRotation = player->rightMotionController->GetRelativeRotation();
 
-		// Yaw와 Pitch 값을 변경하여 새로운 로테이션 생성 
-		if(CurrentRotation.Roll ==180) 
-		{
-			FRotator NewRotation(CurrentRotation.Pitch - PitchRotationAmount, CurrentRotation.Yaw -YawRotationAmount, CurrentRotation.Roll);
-			player->rightMotionController->SetRelativeRotation(NewRotation);
+	//	// Yaw와 Pitch 값을 변경하여 새로운 로테이션 생성 
+	//	if(CurrentRotation.Roll ==180) 
+	//	{
+	//		FRotator NewRotation(CurrentRotation.Pitch - PitchRotationAmount, CurrentRotation.Yaw -YawRotationAmount, CurrentRotation.Roll);
+	//		player->rightMotionController->SetRelativeRotation(NewRotation);
 
-		}
-		else
-		{
-			FRotator NewRotation(CurrentRotation.Pitch + PitchRotationAmount, CurrentRotation.Yaw + YawRotationAmount, CurrentRotation.Roll);
-			player->rightMotionController->SetRelativeRotation(NewRotation);
+	//	}
+	//	else
+	//	{
+	//		FRotator NewRotation(CurrentRotation.Pitch + PitchRotationAmount, CurrentRotation.Yaw + YawRotationAmount, CurrentRotation.Roll);
+	//		player->rightMotionController->SetRelativeRotation(NewRotation);
 
-		}
+	//	}
 
-		// 액터에 새로운 상대적인 로테이션 설정
-		//player->rightMotionController->SetRelativeRotation(NewRotation);
+	//	// 액터에 새로운 상대적인 로테이션 설정
+	//	//player->rightMotionController->SetRelativeRotation(NewRotation);
 
-		UE_LOG(LogTemp, Warning, TEXT("value : %f , %f, %f"), CurrentRotation.Pitch, CurrentRotation.Yaw, CurrentRotation.Roll);
-	}
+	//	UE_LOG(LogTemp, Warning, TEXT("value : %f , %f, %f"), CurrentRotation.Pitch, CurrentRotation.Yaw, CurrentRotation.Roll);
+	//}
+
+
+	FVector2D direction = value.Get<FVector2D>();
+	FVector dir3 = FVector(0,direction.X, direction.Y);
+	player->rightMotionController->SetRelativeLocation(player->rightMotionController->GetRelativeLocation() + dir3.GetSafeNormal());
+	player->rightMotionController->SetRelativeRotation(FRotator(90, 0, 0));
 }
 
 void UShootComponent::ChangeAngle()
