@@ -104,7 +104,7 @@ void UMoveComponent::Rotate(const FInputActionValue& value)
 	if (player->pc != nullptr)
 	{
 		player->pc->AddYawInput(rightConInput.X);
-		player->pc->AddPitchInput(rightConInput.Y);
+		//player->pc->AddPitchInput(rightConInput.Y);
 	}
 }
 
