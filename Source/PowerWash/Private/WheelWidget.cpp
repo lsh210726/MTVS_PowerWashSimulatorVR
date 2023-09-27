@@ -6,6 +6,8 @@
 #include "VRCharacter.h"
 #include "WaterGunActor.h"
 #include "MuzzleActor.h"
+#include "Components/WidgetComponent.h"
+
 
 
 
@@ -28,6 +30,8 @@ void UWheelWidget::LT()
 	UE_LOG(LogTemp, Warning, TEXT("LT"));
 	waterGun->shotAngle = 0;
 	muzzle->changeMaterial(1);
+	player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+	player->MenuUI->SetHiddenInGame(true);
 }
 
 void UWheelWidget::RT()
@@ -35,6 +39,8 @@ void UWheelWidget::RT()
 	UE_LOG(LogTemp, Warning, TEXT("RT"));
 	waterGun->shotAngle = 10;
 	muzzle->changeMaterial(2);
+	player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+	player->MenuUI->SetHiddenInGame(true);
 
 }
 
@@ -43,6 +49,8 @@ void UWheelWidget::LB()
 	UE_LOG(LogTemp, Warning, TEXT("LB"));
 	waterGun->shotAngle = 30;
 	muzzle->changeMaterial(3);
+	player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+	player->MenuUI->SetHiddenInGame(true);
 
 }
 
@@ -51,6 +59,8 @@ void UWheelWidget::RB()
 	UE_LOG(LogTemp, Warning, TEXT("RB"));
 	waterGun->shotAngle = 20;
 	muzzle->changeMaterial(4);
+	player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+	player->MenuUI->SetHiddenInGame(true);
 
 }
 

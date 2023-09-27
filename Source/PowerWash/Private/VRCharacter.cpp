@@ -107,7 +107,7 @@ AVRCharacter::AVRCharacter()
 	leftWidgetPointerComp = CreateDefaultSubobject<ULeftWidgetPointerComponent>(TEXT("Left Widget Pointer Component"));
 
 	muzzleHolder = CreateDefaultSubobject<UBoxComponent>(TEXT("MuzzleHolder"));
-	muzzleHolder->SetupAttachment(RootComponent);
+	muzzleHolder->SetupAttachment(hmdCam);
 	muzzleHolder->SetWorldScale3D(FVector(0.5));
 	muzzleHolder->SetRelativeLocation(FVector(40, -50, 0));
 	muzzleHolder->SetCollisionProfileName(FName("OverlapAllDynamic"));
@@ -140,7 +140,7 @@ AVRCharacter::AVRCharacter()
 	MenuUI->SetRelativeRotation(FRotator(0, 0, 180));
 
 	WheelUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Wheel UI"));
-	WheelUI->SetupAttachment(muzzleHolder);
+	WheelUI->SetupAttachment(hmdCam);
 	WheelUI->SetWorldScale3D(FVector(0.2));
 	WheelUI->SetRelativeRotation(FRotator(0, 0, 180));
 	WheelUI->SetVisibility(true);

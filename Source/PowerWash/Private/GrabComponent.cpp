@@ -174,16 +174,21 @@ void UGrabComponent::GrabObject()
 
 			if (AMuzzleActor* pickObj = Cast<AMuzzleActor>(hitInfo.GetActor()))
 			{
-				pickObj->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
-				pickObj->Attached(player->leftHand,"GrabPoint");
-				grabbedObject = pickObj;
-				player->bHasMuzzle = true;
+				if(!player->bHasMuzzle)
+				{
+					pickObj->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
+					pickObj->Attached(player->leftHand, "GrabPoint");
+					grabbedObject = pickObj;
+					player->bHasMuzzle = true;
+					player->MenuUI->SetHiddenInGame(false);
+					player->MenuUI->SetRelativeLocation(FVector(40, 0, 0));
 
-				//잡았을 때 손 회전값 계산
-				isRot = true;
-				firstHandRot = player->leftHand->GetRelativeRotation();
-				
-				player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
+					//잡았을 때 손 회전값 계산
+					isRot = true;
+					firstHandRot = player->leftHand->GetRelativeRotation();
+
+					player->pc->PlayHapticEffect(grab_Haptic, EControllerHand::Left, 1.0f, false);//물체를 잡으면 진동하기
+				}
 				//break;
 			}
 			//else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 캐릭터가 머즐홀더에서 손을 잡는다면
@@ -234,19 +239,24 @@ void UGrabComponent::ReleaseObject()
 		{
 			if (AWaterGunActor* pickObj = Cast<AWaterGunActor>(hitInfo.GetActor()))//만약 물총에서 트리거를 놓았다면
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
-				if (grabbedObject != nullptr)
+				if(player->bHasMuzzle)
 				{
-					grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
-					grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
-					grabbedObject = nullptr;
-					player->bHasMuzzle = false;
+					UE_LOG(LogTemp, Warning, TEXT("Grab Object : %s"), *hitInfo.GetComponent()->GetName());
+					if (grabbedObject != nullptr)
+					{
+						grabbedObject->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);//그 자리에서 연결 끊기
+						grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
+						grabbedObject = nullptr;
+						player->bHasMuzzle = false;
+						player->MenuUI->SetHiddenInGame(true);
+						player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
 
-					//놓았을 떄 초기화
-					isRot = false;
-					//firstHandRot = player->leftHand->GetRelativeRotation();
+						//놓았을 떄 초기화
+						isRot = false;
+						//firstHandRot = player->leftHand->GetRelativeRotation();
+					}
+					break;
 				}
-				break;
 			}
 			//else if (hitInfo.GetComponent()->GetName() == "MuzzleHolder")//만약 머즐홀더에서 트리거를 놓았다면
 			//{
