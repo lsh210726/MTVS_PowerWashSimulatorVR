@@ -26,7 +26,7 @@ public:
 
 private:
 	class AVRCharacter* player;
-
+	
 public:
 	UPROPERTY(EditDefaultsOnly, Category="MySettings|Components")
 	class UBoxComponent* boxComp;
@@ -68,6 +68,11 @@ public:
 	void shotRot();
 	void grabReleseGun();
 
+	//¿ÃπŒ«œ √ﬂ∞°
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable, Category = "MySettings|Functions")
+	void SpawnSteamEffect(FVector muzzleFwdVec);
+	UPROPERTY(BlueprintReadWrite)
+	FVector MuzzleAngle;
 
 
 };
