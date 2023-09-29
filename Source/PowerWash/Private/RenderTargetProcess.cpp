@@ -8,8 +8,6 @@
 #include "Kismet/KismetRenderingLibrary.h"
 #include <Engine/Canvas.h>
 #include <Kismet/KismetMathLibrary.h>
-#include "NiagaraFunctionLibrary.h"
-#include "NiagaraComponent.h"
 #include <Math/Color.h>
 #include <Kismet/GameplayStatics.h>
 #include "VRCharacter.h"
@@ -33,9 +31,6 @@ URenderTargetProcess::URenderTargetProcess()
 	ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> temp_renderTarget(TEXT("/Game/LMH/protomap/1PaintBoard.1PaintBoard"));
 	if (temp_renderTarget.Succeeded()) PaintingRenderTarget = temp_renderTarget.Object;
 
-	//나이아가라
-	NSSpriteSource = LoadObject<UNiagaraSystem>(nullptr, TEXT("/Game/LMH/protomap/NS_SpriteEffect.NS_SpriteEffect"));
-	//NSShootSource = LoadObject<UNiagaraSystem>(nullptr, TEXT(""));
 }
 
 
@@ -48,8 +43,6 @@ void URenderTargetProcess::BeginPlay()
 	
 	BrushMaterialInstance=UMaterialInstanceDynamic::Create(BrushMaterialTemplates, this); //brush 생성
 	//BrushMaterialInstance->SetTextureParameterValue(FName("RenderTarget"),PaintingRenderTarget); // RT parameter로 주기
-	
-
 
 }
 
@@ -78,19 +71,16 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 	FVector2D UV;
 	bool hit= UGameplayStatics::FindCollisionUV(hitInfo, 0, UV);
 
-	//UE_LOG(LogTemp, Warning, TEXT("UV: %s"), hit ? *FString("True") :                      *FString("False"));
+	//UE_LOG(LogTemp, Warning, TEXT("UV: %s"), hit ? *FString("True") : *FString("False"));
 
 	if (hit) 
 	{
 // 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("UV: %.2f, %.2f"), UV.X, UV.Y), true, FVector2D(1, 1));
- 		//UE_LOG(LogTemp, Warning, TEXT("UV: %.2f, %.2f"), UV.X, UV.Y);
+// 		UE_LOG(LogTemp, Warning, TEXT("UV: %.2f, %.2f"), UV.X, UV.Y);
 
 		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("111111")), true, FVector2D(1, 1));
 		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
 
-		FVector point = hitInfo.ImpactPoint;
-		if (NSSpriteSource) UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NSSpriteSource, point);
-		
 		FDrawToRenderTargetContext context;
 		FLinearColor DrawLocation_color = UKismetMathLibrary::Conv_VectorToLinearColor(UKismetMathLibrary::Conv_Vector2DToVector(UV, 0.1));
 
@@ -114,16 +104,6 @@ void URenderTargetProcess::SetBrushOpacity(float op)
 	if (op<=0 ) op=0;
 	else if(op>1) op=1;
 	BrushMaterialInstance->SetScalarParameterValue(FName("op"),op);
-}
-
-void URenderTargetProcess::StartShootEffect()
-{
-	
-}
-
-void URenderTargetProcess::EndShootEffect()
-{
-
 }
 
 //void URenderTargetProcess::CopyToMainCanvas()

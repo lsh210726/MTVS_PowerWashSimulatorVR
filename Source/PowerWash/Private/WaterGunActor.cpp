@@ -127,7 +127,6 @@ void AWaterGunActor::WideShot(float degree)
 	FVector muzzleFwdVec;
 	if (!horShot) muzzleRotation.Pitch -= degree / 2;
 	else muzzleRotation.Yaw -= degree / 2;
-	//SpawnSteamEffect(muzzleFwdVec);
 
 	for (int i = 0; i < shotTime; ++i)
 	{
@@ -136,7 +135,6 @@ void AWaterGunActor::WideShot(float degree)
 		UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleRotation.Roll, muzzleRotation.Pitch, muzzleRotation.Yaw);
 		UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleFwdVec.X, muzzleFwdVec.Y, muzzleFwdVec.Z);
 		ShootWater(muzzleFwdVec);
-
 		if (!horShot) muzzleRotation.Pitch += degree / shotTime;
 		else muzzleRotation.Yaw += degree / shotTime;
 	}
@@ -144,7 +142,7 @@ void AWaterGunActor::WideShot(float degree)
 
 void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 {
-	FHitResult hitInfo; 
+	FHitResult hitInfo;
 	DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
 	//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleFwdVec.X, muzzleFwdVec.Y, muzzleFwdVec.Z);
 
@@ -234,11 +232,5 @@ void AWaterGunActor::grabReleseGun()
 		UE_LOG(LogTemp, Warning, TEXT("grabReleseGunEventOn"));
 
 	}
-}
-
-void AWaterGunActor::SpawnSteamEffect_Implementation(FVector muzzleFwdVec)
-{
-	MuzzleAngle=muzzleFwdVec;
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("vec: %.2f, %.2f,%.2f"), muzzleFwdVec.X, muzzleFwdVec.Y, muzzleFwdVec.Z), true, FVector2D(1, 1));
 }
 
