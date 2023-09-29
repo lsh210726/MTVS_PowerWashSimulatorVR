@@ -33,7 +33,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LMH|Settings")
 	class UMaterialInstanceDynamic* BrushMaterialInstance;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LMH|Effects")
+	class UNiagaraSystem* NSSpriteSource;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LMH|Effects")
+	class UNiagaraSystem* NSShootSource;
+
+	class UNiagaraComponent* NSSpriteComp;
+	class UNiagaraComponent* NSShootComp;
+
 
 	UFUNCTION(BlueprintCallable,Category = "LMH|Settings")
 	void DrawCar(const FHitResult& hitInfo);
@@ -46,6 +53,7 @@ public:
 
 
 	void SetBrushOpacity(float op);
-
+	void StartShootEffect();
+	void EndShootEffect();
 	
 };
