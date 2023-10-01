@@ -11,6 +11,10 @@
 #include <Math/Color.h>
 #include <Kismet/GameplayStatics.h>
 #include "VRCharacter.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "NSActor.h"
+#include <Components/ActorComponent.h>
 
 // Sets default values for this component's properties
 URenderTargetProcess::URenderTargetProcess()
@@ -31,6 +35,12 @@ URenderTargetProcess::URenderTargetProcess()
 	ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> temp_renderTarget(TEXT("/Game/LMH/protomap/1PaintBoard.1PaintBoard"));
 	if (temp_renderTarget.Succeeded()) PaintingRenderTarget = temp_renderTarget.Object;
 
+	ConstructorHelpers::FClassFinder<ANSActor> temp_NSActor(TEXT("/Game/LMH/betamap/BP_NSActor.BP_NSActor_C"));
+	if (temp_NSActor.Succeeded())
+	{
+		NSSpriteFactory=temp_NSActor.Class;
+	}
+	
 }
 
 
@@ -43,7 +53,18 @@ void URenderTargetProcess::BeginPlay()
 	
 	BrushMaterialInstance=UMaterialInstanceDynamic::Create(BrushMaterialTemplates, this); //brush 생성
 	//BrushMaterialInstance->SetTextureParameterValue(FName("RenderTarget"),PaintingRenderTarget); // RT parameter로 주기
+	//
+	NsSpriteActor.SetNum(setnum);
+	for (int i = 0; i < setnum; i++)
+	{
+		FActorSpawnParameters Params;
+		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		NsSpriteActor[i] = GetWorld()->SpawnActor<ANSActor>(NSSpriteFactory, FVector(0), FRotator(0), Params);
 
+		/*TArray<UActorComponent*> NSs = NsSpriteActor[i]->GetComponentsByClass(UNiagaraComponent::StaticClass());
+		UNiagaraComponent* NS = Cast<UNiagaraComponent>(NSs[0]);
+		NS->SetVisibility(false);*/
+	}
 }
 
 
@@ -80,7 +101,15 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 
 		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("111111")), true, FVector2D(1, 1));
 		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
-
+		FVector point = hitInfo.ImpactPoint; 
+		if (NSIdx>= setnum) NSIdx=0;
+		if (NsSpriteActor[NSIdx])
+		{	
+			/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("nsidx:%d"),NSIdx), true, FVector2D(1, 1));*/
+			NsSpriteActor[NSIdx]->SetActorLocation(point);
+			NsSpriteActor[NSIdx++]->SetVisibleOnOff(true);
+		}
+		
 		FDrawToRenderTargetContext context;
 		FLinearColor DrawLocation_color = UKismetMathLibrary::Conv_VectorToLinearColor(UKismetMathLibrary::Conv_Vector2DToVector(UV, 0.1));
 
@@ -91,7 +120,7 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 			BrushMaterialInstance->SetVectorParameterValue(FName("DrawLocation"), DrawLocation_color);
 			UKismetRenderingLibrary::DrawMaterialToRenderTarget(GetWorld(), PaintingRenderTarget, BrushMaterialInstance);
 		}
-	}	
+	}
 }
 
 void URenderTargetProcess::DrawSize(float drawSize)
