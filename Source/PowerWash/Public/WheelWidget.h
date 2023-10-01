@@ -27,6 +27,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category=UI,meta=(BindWidget))
 	class UButton* btn_RB;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=UI)
+	bool isShow = false;
+
+	UFUNCTION()
+	void changeHidden(bool status);
+
 protected:
 	virtual void NativeConstruct() override;
 

@@ -120,6 +120,9 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MySettings|UI")
 	class UTextRenderComponent* GameOverLog;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MySettings|UI")
+	bool isWheelMenuHidden = true;
+
 	UFUNCTION()
 	void OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -167,5 +170,6 @@ private:
 	void RightBDown();
 	void RightBUp();
 	void RightBTouch();
+	void wheelUIchangeHidden();
 	
 };
