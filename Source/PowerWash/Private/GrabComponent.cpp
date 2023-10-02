@@ -68,6 +68,8 @@ void UGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 				player->bHasMuzzle = false;
 				player->waterGun->shotRot();
 
+				player->MuzzleChangeSoundPlay();//머즐소리재생
+
 				//놓았을 떄 초기화
 				isRot = false;
 				//firstHandRot = player->leftHand->GetRelativeRotation();
@@ -184,6 +186,9 @@ void UGrabComponent::GrabObject()
 					player->MenuUI->SetHiddenInGame(false);
 					//player->MenuUI->SetRelativeLocation(FVector(40, 0, 0));
 
+					player->MuzzleChangeSoundPlay();//머즐소리재생
+
+
 					FTimerHandle GravityTimerHandle;
 					float GravityTime=0.1f;
 
@@ -270,6 +275,9 @@ void UGrabComponent::ReleaseObject()
 						player->bHasMuzzle = false;
 						//player->MenuUI->SetHiddenInGame(true);
 						//player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+
+						player->MuzzleChangeSoundPlay();//머즐소리재생
+
 
 						player->isWheelMenuHidden = true;
 

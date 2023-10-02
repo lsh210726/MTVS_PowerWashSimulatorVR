@@ -69,7 +69,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UShootComponent* shootComp;//¹°ÃÑ½î±â
 
-	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings|Components")
 	class AWaterGunActor* waterGun;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
@@ -140,6 +140,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void mainMenuOnOff();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void MuzzleChangeSoundPlay();
+
 
 	class APlayerController* pc;
 	class ABallActor* ball;

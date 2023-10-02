@@ -399,6 +399,11 @@ void AVRCharacter::mainMenuOnOff_Implementation()
 	if (waterGun != nullptr) waterGun->grabReleseGun();
 }
 
+void AVRCharacter::MuzzleChangeSoundPlay_Implementation()
+{
+
+}
+
 void AVRCharacter::RightTriggerDown()
 {
 	rightLog->SetText(FText::FromString("Right Trigger Down!"));
