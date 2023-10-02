@@ -23,8 +23,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LMH|Effects")
-	class UNiagaraSystem* NSSpriteSource;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LMH|Effects")
+	//class UNiagaraSystem* NSSpriteSource;
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "LMH|Effects")
 	//class UNiagaraSystem* NSShootSource;
 

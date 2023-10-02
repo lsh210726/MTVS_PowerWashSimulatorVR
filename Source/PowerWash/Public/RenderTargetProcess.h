@@ -20,6 +20,12 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+//	//void SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions);
+//
+//private:
+//	void LeftMouseClick();
+//	void LeftMouseRelased();
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -48,10 +54,10 @@ public:
 
 	TArray<class ANSActor*> NsSpriteActor;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "MySettings|LMH")
-	TSubclassOf<class ANSActor> NSSpriteFactory;
+	//UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "MySettings|LMH")
+	//TSubclassOf<class ANSActor> NSSpriteFactory;
 
-	int setnum= 50;
+	int setnum= 60;
 	int NSIdx=0;
 	
 };

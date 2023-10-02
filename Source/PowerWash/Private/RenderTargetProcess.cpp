@@ -15,6 +15,8 @@
 #include "NiagaraComponent.h"
 #include "NSActor.h"
 #include <Components/ActorComponent.h>
+#include <Components/AudioComponent.h>
+#include <Sound/SoundCue.h>
 
 // Sets default values for this component's properties
 URenderTargetProcess::URenderTargetProcess()
@@ -35,12 +37,12 @@ URenderTargetProcess::URenderTargetProcess()
 	ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> temp_renderTarget(TEXT("/Game/LMH/protomap/1PaintBoard.1PaintBoard"));
 	if (temp_renderTarget.Succeeded()) PaintingRenderTarget = temp_renderTarget.Object;
 
-	ConstructorHelpers::FClassFinder<ANSActor> temp_NSActor(TEXT("/Game/LMH/betamap/BP_NSActor.BP_NSActor_C"));
-	if (temp_NSActor.Succeeded())
-	{
-		NSSpriteFactory=temp_NSActor.Class;
-	}
-	
+	//ConstructorHelpers::FClassFinder<ANSActor> temp_NSActor(TEXT("/Game/LMH/betamap/BP_NSActor.BP_NSActor_C"));
+	//if (temp_NSActor.Succeeded())
+	//{
+	//	NSSpriteFactory=temp_NSActor.Class;
+	//}
+
 }
 
 
@@ -48,23 +50,36 @@ URenderTargetProcess::URenderTargetProcess()
 void URenderTargetProcess::BeginPlay()
 {
 	Super::BeginPlay();
-	//player=GetOwner<AVRCharacter>();
+	//player=GetWorld()-> GetActorOfClass()
+
+	//player = Cast<AVRCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AVRCharacter::StaticClass()));
+	//if (!player) return;
+
+	NsSpriteActor.SetNum(setnum);
 	UKismetRenderingLibrary::ClearRenderTarget2D(GetWorld(),PaintingRenderTarget, PaintingRenderTarget->ClearColor);
 	
 	BrushMaterialInstance=UMaterialInstanceDynamic::Create(BrushMaterialTemplates, this); //brush 생성
 	//BrushMaterialInstance->SetTextureParameterValue(FName("RenderTarget"),PaintingRenderTarget); // RT parameter로 주기
 	//
-	NsSpriteActor.SetNum(setnum);
+	
+	UWorld* world=GetWorld();
 	for (int i = 0; i < setnum; i++)
 	{
-		FActorSpawnParameters Params;
-		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		NsSpriteActor[i] = GetWorld()->SpawnActor<ANSActor>(NSSpriteFactory, FVector(0), FRotator(0), Params);
+		if (world)
+		{
+			FActorSpawnParameters Params;
+			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			
+			ANSActor* ns = world->SpawnActor<ANSActor>(ANSActor::StaticClass(), FVector(0,0,0),FRotator(0,0,0), Params);
+			if (ns) NsSpriteActor[i] = ns;
+		}
+		
 
 		/*TArray<UActorComponent*> NSs = NsSpriteActor[i]->GetComponentsByClass(UNiagaraComponent::StaticClass());
 		UNiagaraComponent* NS = Cast<UNiagaraComponent>(NSs[0]);
 		NS->SetVisibility(false);*/
 	}
+
 }
 
 
@@ -100,7 +115,8 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 // 		UE_LOG(LogTemp, Warning, TEXT("UV: %.2f, %.2f"), UV.X, UV.Y);
 
 		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("111111")), true, FVector2D(1, 1));
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
+
+
 		FVector point = hitInfo.ImpactPoint; 
 		if (NSIdx>= setnum) NSIdx=0;
 		if (NsSpriteActor[NSIdx])
@@ -108,6 +124,8 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 			/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("nsidx:%d"),NSIdx), true, FVector2D(1, 1));*/
 			NsSpriteActor[NSIdx]->SetActorLocation(point);
 			NsSpriteActor[NSIdx++]->SetVisibleOnOff(true);
+
+			//if (SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(false);
 		}
 		
 		FDrawToRenderTargetContext context;
@@ -119,6 +137,9 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 
 			BrushMaterialInstance->SetVectorParameterValue(FName("DrawLocation"), DrawLocation_color);
 			UKismetRenderingLibrary::DrawMaterialToRenderTarget(GetWorld(), PaintingRenderTarget, BrushMaterialInstance);
+
+			//if (!SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(true);
+
 		}
 	}
 }
@@ -134,6 +155,7 @@ void URenderTargetProcess::SetBrushOpacity(float op)
 	else if(op>1) op=1;
 	BrushMaterialInstance->SetScalarParameterValue(FName("op"),op);
 }
+
 
 //void URenderTargetProcess::CopyToMainCanvas()
 //{
@@ -155,4 +177,20 @@ void URenderTargetProcess::SetBrushOpacity(float op)
 //	
 //
 //}
-
+//void URenderTargetProcess::SetupPlayerInputComponent(UEnhancedInputComponent* enhancedInputComponent, TArray<UInputAction*> inputActions)
+//{
+//	enhancedInputComponent->BindAction(player->inputActions[2], ETriggerEvent::Started, this, &URenderTargetProcess::LeftMouseClick);
+//	enhancedInputComponent->BindAction(player->inputActions[2], ETriggerEvent::Completed, this, &URenderTargetProcess::LeftMouseRelased);
+//}
+//
+//void URenderTargetProcess::LeftMouseClick()
+//{
+//	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("111111")), true, FVector2D(1, 1));
+//	if (SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(false);
+//}
+//
+//void URenderTargetProcess::LeftMouseRelased()
+//{
+//	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("2222")), true, FVector2D(1, 1));
+//	if (!SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(true);
+//}

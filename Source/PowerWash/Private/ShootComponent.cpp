@@ -10,6 +10,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include <Kismet/KismetMathLibrary.h>
+#include <Components/AudioComponent.h>
+#include <Sound/SoundCue.h>
 
 
 
@@ -22,6 +24,12 @@ UShootComponent::UShootComponent()
 	//NGShootMuzzle = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
 	//NGShooComp->SetupAttachment(RootComponent);
 	// ...
+
+	//이민하 추가
+	static ConstructorHelpers::FObjectFinder<USoundCue> temp_Cue(TEXT("/Game/LMH/Sound/SprayQue.SprayQue"));
+	if (temp_Cue.Succeeded()) SprayCue = temp_Cue.Object;
+	
+	SprayCueComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SprayComp"));
 }
 
 
@@ -32,6 +40,13 @@ void UShootComponent::BeginPlay()
 
 	// ...
 	player = GetOwner<AVRCharacter>();
+
+	//이민하 추가
+	if (SprayCue) {
+		SprayCueComponent->SetSound(SprayCue);
+		SprayCueComponent->Activate(true);
+		SprayCueComponent->SetPaused(true);
+	}
 	//if (NGShootMuzzle) {
 	//	// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
 	//	NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NGShootMuzzle, player->waterGun->muzzleMesh, NAME_None, FVector(0.f), UKismetMathLibrary::MakeRotFromX(player->waterGun->muzzleMesh->GetForwardVector()), EAttachLocation::Type::SnapToTarget, true);
@@ -71,7 +86,7 @@ void UShootComponent::RighttTriggerDown()
 	if (player->bHasGun)player->waterGun->Shoot();
 }
 
-//이민하 추가, NiagaraEffect visiblity 조절
+//이민하 추가, sound 추가
 void UShootComponent::OnNiagaraEffect()
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("111111111"));
@@ -79,12 +94,12 @@ void UShootComponent::OnNiagaraEffect()
 		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
 		// Parameters can be set like this (see documentation for further info) - the names and type must match the user exposed parameter in the Niagara System
 		//NiagaraComp->SetNiagaraVariableFloat(FString("StrengthCoef"), CoefStrength);
-	 
+	if (SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(false); 
 }
 
 void UShootComponent::OffNiagaraEffect()
 {
-	//
+	if (!SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(true);
 }
 
 void UShootComponent::RightHandMove(const struct FInputActionValue& value)

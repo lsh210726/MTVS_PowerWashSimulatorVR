@@ -16,10 +16,8 @@ ANSActor::ANSActor()
 	NSSpritecomp=CreateDefaultSubobject<UNiagaraComponent>(TEXT("Effect Comp"));
 	NSSpritecomp->SetupAttachment(RootComponent);
 	ConstructorHelpers::FObjectFinder<UNiagaraSystem> temp_effect(TEXT("/Game/LMH/protomap/NS_SpriteEffect.NS_SpriteEffect"));
-	if (temp_effect.Succeeded())
-	{
-		NSSpritecomp->SetAsset(temp_effect.Object);
-	}
+	if (temp_effect.Succeeded()) NSSpritecomp->SetAsset(temp_effect.Object);
+	
 }
 
 // Called when the game starts or when spawned
@@ -40,7 +38,7 @@ void ANSActor::SetVisibleOnOff(bool isOn)
 {
 	if (isOn){
 		
-		this->NSSpritecomp->SetVisibility(true);
+		NSSpritecomp->SetVisibility(isOn);
 		StartTimer();
 	}
 }
@@ -60,5 +58,5 @@ void ANSActor::StartTimer()
 void ANSActor::TimerCallback()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Timer Callback Called"));
-	this->NSSpritecomp->SetVisibility(false);
+	NSSpritecomp->SetVisibility(false);
 }

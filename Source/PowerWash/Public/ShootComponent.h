@@ -49,4 +49,10 @@ public:
 	
 	UPROPERTY(VisibleAnywhere,Category="MySettings|Effects")
 	class UNiagaraComponent* NiagaraComp;
+
+	UPROPERTY(EditAnywhere,Category="MySettings|LMH")
+	class USoundCue* SprayCue;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "MySettings|LMH")
+	class UAudioComponent* SprayCueComponent;
 };
