@@ -54,6 +54,8 @@ URenderTargetProcess::URenderTargetProcess()
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/EFFECT/TrilFX/SmokeBeam/P_SmokeTrail.P_SmokeTrail"));
 	if(ParticleAsset.Succeeded()) BeamParticles=ParticleAsset.Object;
+
+
 }
 
 
@@ -73,6 +75,8 @@ void URenderTargetProcess::BeginPlay()
 	BrushMaterialInstance=UMaterialInstanceDynamic::Create(BrushMaterialTemplates, this); //brush 생성
 	//BrushMaterialInstance->SetTextureParameterValue(FName("RenderTarget"),PaintingRenderTarget); // RT parameter로 주기
 	//
+	//AActor* bp_car=GetOwner<AActor>();
+	//bp_car->get
 	
 	UWorld* world=GetWorld();
 	for (int i = 0; i < setnum; i++)
@@ -122,6 +126,8 @@ void URenderTargetProcess::BeginPlay()
 		/*TArray<UActorComponent*> NSs = NsSpriteActor[i]->GetComponentsByClass(UNiagaraComponent::StaticClass());
 		UNiagaraComponent* NS = Cast<UNiagaraComponent>(NSs[0]);
 		NS->SetVisibility(false);*/
+
+		
 	}
 
 }
@@ -195,6 +201,11 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo, FVector muzzleLoca
 void URenderTargetProcess::DrawSize(float drawSize)
 {
 	BrushMaterialInstance->SetScalarParameterValue(FName("Size"),drawSize);
+}
+
+void URenderTargetProcess::SetCarMaterial_Implementation()
+{
+	//
 }
 
 void URenderTargetProcess::SetBrushOpacity(float op)

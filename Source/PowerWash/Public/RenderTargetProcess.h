@@ -50,6 +50,10 @@ public:
 	UFUNCTION(BlueprintCallable,Category = "MySettings|LMH")
 	void DrawSize(float drawSize);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void SetCarMaterial();
+
+	//class UStaticMeshComponent* 
 	class AVRCharacter* player;
 	//void (FHitResult HitResult);
 
@@ -76,4 +80,6 @@ public:
 	class UParticleSystem* BeamParticles;
 
 	void PowerWashEffect(FVector point, FVector muzzleLocation);
+
+
 };

@@ -13,6 +13,8 @@
 #include "RenderTargetProcess.h"
 #include "Kismet/GameplayStatics.h"
 #include "MuzzleActor.h"
+#include "ShootComponent.h"
+#include <Particles/ParticleSystemComponent.h>
 
 
 
@@ -52,6 +54,9 @@ void AWaterGunActor::BeginPlay()
 		});
 
 	player = Cast<AVRCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
+	//ÀÌ¹ÎÇÏ Ãß°¡
+	shootComp = player->GetComponentByClass<UShootComponent>();
 
 	//if (player)
 	//{
@@ -158,10 +163,13 @@ void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 		{
 			//DrawDebugSphere(GetWorld(), result2.ImpactPoint, 5, 8, FColor::White, false, 0.2f, 0, 0.3f);
 			auto HitActor = Cast<AActor>(result2.GetActor());
+			 // (result2.ImpactPoint);
+			if(shootComp) shootComp->SteamComp->SetWorldLocation(result2.ImpactPoint);
+			
 
 			URenderTargetProcess* renderComp = HitActor->GetComponentByClass<URenderTargetProcess>();
 			if (renderComp) renderComp->DrawCar(result2,muzzleLocation);
-			//***************************
+
 			/*FVector2D UV;
 			bool hit = UGameplayStatics::FindCollisionUV(result2, 0, UV);
 			UE_LOG(LogTemp, Warning, TEXT("UV Location: %s"), hit ? *FString("True") : *FString("False"));*/

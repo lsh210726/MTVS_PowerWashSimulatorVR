@@ -12,6 +12,9 @@
 #include <Kismet/KismetMathLibrary.h>
 #include <Components/AudioComponent.h>
 #include <Sound/SoundCue.h>
+#include <Kismet/GameplayStatics.h>
+#include <Camera/PlayerCameraManager.h>
+#include <Particles/ParticleSystemComponent.h>
 
 
 
@@ -28,8 +31,9 @@ UShootComponent::UShootComponent()
 	//¿ÃπŒ«œ √ﬂ∞°
 	static ConstructorHelpers::FObjectFinder<USoundCue> temp_Cue(TEXT("/Game/LMH/Sound/SprayQue.SprayQue"));
 	if (temp_Cue.Succeeded()) SprayCue = temp_Cue.Object;
-	
 	SprayCueComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SprayComp"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> SteamParticleAsset(TEXT("/Game/LMH/betamap/P_Steam_Lit.P_Steam_Lit"));
+	if (SteamParticleAsset.Succeeded()) SteamParticles = SteamParticleAsset.Object;
 }
 
 
@@ -47,6 +51,16 @@ void UShootComponent::BeginPlay()
 		SprayCueComponent->Activate(true);
 		SprayCueComponent->SetPaused(true);
 	}
+	SteamComp = UGameplayStatics::SpawnEmitterAtLocation(
+		GetWorld(),
+		SteamParticles,
+		FVector(0),
+		FRotator::ZeroRotator,
+		true
+	);
+	if (SteamComp) SteamComp->SetVisibility(false);
+
+
 	//if (NGShootMuzzle) {
 	//	// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
 	//	NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(NGShootMuzzle, player->waterGun->muzzleMesh, NAME_None, FVector(0.f), UKismetMathLibrary::MakeRotFromX(player->waterGun->muzzleMesh->GetForwardVector()), EAttachLocation::Type::SnapToTarget, true);
@@ -69,6 +83,7 @@ void UShootComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 void UShootComponent::SetupPlayerInputComponent(class UEnhancedInputComponent* enhancedInputComponent, TArray<class UInputAction*> inputActions)
 {
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Triggered, this, &UShootComponent::RighttTriggerDown);
+	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Triggered, this, &UShootComponent::OnNiagaraEffectTrigger);
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Started, this, &UShootComponent::OnNiagaraEffect);
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UShootComponent::RighttTriggerDown);
 	enhancedInputComponent->BindAction(inputActions[2], ETriggerEvent::Completed, this, &UShootComponent::OffNiagaraEffect);
@@ -95,11 +110,23 @@ void UShootComponent::OnNiagaraEffect()
 		// Parameters can be set like this (see documentation for further info) - the names and type must match the user exposed parameter in the Niagara System
 		//NiagaraComp->SetNiagaraVariableFloat(FString("StrengthCoef"), CoefStrength);
 	if (SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(false); 
+
+	
 }
 
 void UShootComponent::OffNiagaraEffect()
 {
 	if (!SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(true);
+	if (SteamComp) SteamComp->SetVisibility(false);
+
+
+}
+
+void UShootComponent::OnNiagaraEffectTrigger()
+{
+	if (SteamComp) {
+		if (!SteamComp->IsVisible()) SteamComp->SetVisibility(true);
+	}
 }
 
 void UShootComponent::RightHandMove(const struct FInputActionValue& value)

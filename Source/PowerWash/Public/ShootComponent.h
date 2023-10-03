@@ -28,6 +28,7 @@ public:
 	void RighttTriggerDown();
 	void OnNiagaraEffect();    //¿ÃπŒ«œ √ﬂ∞°
 	void OffNiagaraEffect();    //¿ÃπŒ«œ √ﬂ∞°
+	void OnNiagaraEffectTrigger();    //¿ÃπŒ«œ √ﬂ∞°
 	void RightHandMove(const struct FInputActionValue& value);
 	void ChangeAngle();
 	void ShowUI();
@@ -55,4 +56,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "MySettings|LMH")
 	class UAudioComponent* SprayCueComponent;
+
+	class UParticleSystem* SteamParticles;
+	class UParticleSystemComponent* SteamComp;
 };

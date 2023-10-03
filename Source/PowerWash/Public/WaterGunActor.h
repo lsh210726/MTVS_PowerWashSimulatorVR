@@ -68,6 +68,8 @@ public:
 	void shotRot();
 	void grabReleseGun();
 
-
+	//¿ÃπŒ«œ √ﬂ∞°
+	UPROPERTY()
+	class UShootComponent* shootComp;
 
 };
