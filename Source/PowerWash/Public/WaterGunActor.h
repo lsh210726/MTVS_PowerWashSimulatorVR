@@ -46,6 +46,7 @@ public:
 
 	FVector muzzleLocation;
 	FRotator muzzleRotation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category="MySettings|Components")
 	float shotAngle = 0;
 	FRotator currRot;
 
@@ -68,6 +69,7 @@ public:
 	void shotRot();
 	void grabReleseGun();
 
-
+	UFUNCTION(BlueprintNativeEvent)
+	void shotSoundPlay();
 
 };

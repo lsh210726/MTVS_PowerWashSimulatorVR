@@ -69,7 +69,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UShootComponent* shootComp;//¹°ÃÑ½î±â
 
-	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings|Components")
 	class AWaterGunActor* waterGun;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|Components")
@@ -120,6 +120,9 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MySettings|UI")
 	class UTextRenderComponent* GameOverLog;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="MySettings|UI")
+	bool isWheelMenuHidden = true;
+
 	UFUNCTION()
 	void OnComponentBeginOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -137,6 +140,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void mainMenuOnOff();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void MuzzleChangeSoundPlay();
+
 
 	class APlayerController* pc;
 	class ABallActor* ball;
@@ -167,5 +174,6 @@ private:
 	void RightBDown();
 	void RightBUp();
 	void RightBTouch();
+	void wheelUIchangeHidden();
 	
 };
