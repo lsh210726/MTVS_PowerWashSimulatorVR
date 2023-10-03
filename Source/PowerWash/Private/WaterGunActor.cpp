@@ -143,7 +143,7 @@ void AWaterGunActor::WideShot(float degree)
 void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 {
 	FHitResult hitInfo;
-	DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
+	//DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
 	//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleFwdVec.X, muzzleFwdVec.Y, muzzleFwdVec.Z);
 
 	if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, ECC_Visibility))
@@ -156,11 +156,11 @@ void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 
 		if (hitInfo.GetComponent()->LineTraceComponent(result2, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, params))
 		{
-			DrawDebugSphere(GetWorld(), result2.ImpactPoint, 5, 8, FColor::White, false, 0.2f, 0, 0.3f);
+			//DrawDebugSphere(GetWorld(), result2.ImpactPoint, 5, 8, FColor::White, false, 0.2f, 0, 0.3f);
 			auto HitActor = Cast<AActor>(result2.GetActor());
 
 			URenderTargetProcess* renderComp = HitActor->GetComponentByClass<URenderTargetProcess>();
-			if (renderComp) renderComp->DrawCar(result2);
+			if (renderComp) renderComp->DrawCar(result2,muzzleLocation);
 			//***************************
 			/*FVector2D UV;
 			bool hit = UGameplayStatics::FindCollisionUV(result2, 0, UV);

@@ -17,6 +17,9 @@
 #include <Components/ActorComponent.h>
 #include <Components/AudioComponent.h>
 #include <Sound/SoundCue.h>
+#include <Materials/MaterialInstance.h>
+#include <Components/DecalComponent.h>
+#include <Particles/ParticleSystemComponent.h>
 
 // Sets default values for this component's properties
 URenderTargetProcess::URenderTargetProcess()
@@ -29,13 +32,16 @@ URenderTargetProcess::URenderTargetProcess()
 	
 	BrushMaterialTemplates=CreateDefaultSubobject<UMaterial>(TEXT("Material"));
 
-	ConstructorHelpers::FObjectFinder<UMaterial> temp_mat(TEXT("/Game/LMH/protomap/Brush.Brush"));
+	ConstructorHelpers::FObjectFinder<UMaterial> temp_mat(TEXT("/Game/LMH/protomap/WhiteBoardMarker.WhiteBoardMarker"));
 	if (temp_mat.Succeeded()) BrushMaterialTemplates = temp_mat.Object;
 	
 	PaintingRenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("PaintingRenderTarget"));
 
 	ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> temp_renderTarget(TEXT("/Game/LMH/protomap/1PaintBoard.1PaintBoard"));
 	if (temp_renderTarget.Succeeded()) PaintingRenderTarget = temp_renderTarget.Object;
+	
+	ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> temp_renderTarget2(TEXT("/Game/LMH/protomap/2PaintBoard.2PaintBoard"));
+	if (temp_renderTarget2.Succeeded()) PaintingRenderTarget2 = temp_renderTarget2.Object;
 
 	//ConstructorHelpers::FClassFinder<ANSActor> temp_NSActor(TEXT("/Game/LMH/betamap/BP_NSActor.BP_NSActor_C"));
 	//if (temp_NSActor.Succeeded())
@@ -43,6 +49,11 @@ URenderTargetProcess::URenderTargetProcess()
 	//	NSSpriteFactory=temp_NSActor.Class;
 	//}
 
+	ConstructorHelpers::FObjectFinder<UMaterialInstance> temp_puddle(TEXT("/Game/LMH/betamap/MI_Puddle.MI_Puddle"));
+	if (temp_puddle.Succeeded()) MI_Puddle=temp_puddle.Object;
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/EFFECT/TrilFX/SmokeBeam/P_SmokeTrail.P_SmokeTrail"));
+	if(ParticleAsset.Succeeded()) BeamParticles=ParticleAsset.Object;
 }
 
 
@@ -57,6 +68,7 @@ void URenderTargetProcess::BeginPlay()
 
 	NsSpriteActor.SetNum(setnum);
 	UKismetRenderingLibrary::ClearRenderTarget2D(GetWorld(),PaintingRenderTarget, PaintingRenderTarget->ClearColor);
+	UKismetRenderingLibrary::ClearRenderTarget2D(GetWorld(),PaintingRenderTarget2, PaintingRenderTarget2->ClearColor);
 	
 	BrushMaterialInstance=UMaterialInstanceDynamic::Create(BrushMaterialTemplates, this); //brush 생성
 	//BrushMaterialInstance->SetTextureParameterValue(FName("RenderTarget"),PaintingRenderTarget); // RT parameter로 주기
@@ -72,8 +84,40 @@ void URenderTargetProcess::BeginPlay()
 			
 			ANSActor* ns = world->SpawnActor<ANSActor>(ANSActor::StaticClass(), FVector(0,0,0),FRotator(0,0,0), Params);
 			if (ns) NsSpriteActor[i] = ns;
+
+			UDecalComponent* decalcomp = UGameplayStatics::SpawnDecalAtLocation(GetWorld(),MI_Puddle, DecalSize,  FVector(0), FRotator(0,0,-90),0);
+			if (decalcomp)
+			{
+				decalcomp->SetFadeScreenSize(0);
+				DecalActors.Add(decalcomp);
+			}
 		}
-		
+			//// 2. Spawn 위치 및 회전 설정
+			//FTransform SpawnTransform;
+			//SpawnTransform.SetLocation(FVector(0, 0, 0)); // 원하는 위치로 설정하세요.
+			//SpawnTransform.SetRotation(FQuat::Identity); // 원하는 회전으로 설정하세요.
+
+			//// 3. Decal Actor 생성
+			//ADecalActor* NewDecalActor = World->SpawnActor<ADecalActor>(ADecalActor::StaticClass(), SpawnTransform);
+
+			//if (NewDecalActor)
+			//{
+			//	// 생성 성공!
+			//	UE_LOG(LogTemp, Warning, TEXT("New decal actor spawned!"));
+
+			//	// 4. Decal 설정
+			//	UMaterialInterface* MyDecalMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MyMaterials/MyDecalMaterial.MyDecalMaterial"));
+
+			//	if (MyDecalMaterial)
+			//	{
+			//		NewDecalActor->SetDecalMaterial(MyDecalcMaterial);
+			//		NewDecalcActor->GetDeaclComponent()->SetFadeScreenSize(0.01f);
+			//		NewDeaclActor->GetDeaclComponent()->SetSortOrder(10);
+			//		NewDeaclactor->GetDeaclComponent()->SetLifeSpan(5.f);   // optional: lifespan in seconds.
+			//		...
+			//	}
+
+			//}
 
 		/*TArray<UActorComponent*> NSs = NsSpriteActor[i]->GetComponentsByClass(UNiagaraComponent::StaticClass());
 		UNiagaraComponent* NS = Cast<UNiagaraComponent>(NSs[0]);
@@ -91,7 +135,7 @@ void URenderTargetProcess::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
+void URenderTargetProcess::DrawCar(const FHitResult& hitInfo, FVector muzzleLocation)
 {
 	/*if (player != nullptr)
 	{
@@ -123,7 +167,10 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 		{	
 			/*GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("nsidx:%d"),NSIdx), true, FVector2D(1, 1));*/
 			NsSpriteActor[NSIdx]->SetActorLocation(point);
-			NsSpriteActor[NSIdx++]->SetVisibleOnOff(true);
+			//DecalActors[NSIdx]->SetWorldLocation(point);
+			NsSpriteActor[NSIdx]->SetVisibleOnOff(true);
+
+			NSIdx++;
 
 			//if (SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(false);
 		}
@@ -137,9 +184,10 @@ void URenderTargetProcess::DrawCar(const FHitResult& hitInfo)
 
 			BrushMaterialInstance->SetVectorParameterValue(FName("DrawLocation"), DrawLocation_color);
 			UKismetRenderingLibrary::DrawMaterialToRenderTarget(GetWorld(), PaintingRenderTarget, BrushMaterialInstance);
+			UKismetRenderingLibrary::DrawMaterialToRenderTarget(GetWorld(), PaintingRenderTarget2, BrushMaterialInstance);
 
 			//if (!SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(true);
-
+			PowerWashEffect(point,muzzleLocation);
 		}
 	}
 }
@@ -156,6 +204,31 @@ void URenderTargetProcess::SetBrushOpacity(float op)
 	BrushMaterialInstance->SetScalarParameterValue(FName("op"),op);
 }
 
+void URenderTargetProcess::PowerWashEffect(FVector point, FVector muzzleLocation)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("11111")), true, FVector2D(1, 1));
+	UWorld* World = GetWorld(); //
+	if (World)
+	{
+		FVector BeamEnd = point;
+
+		if (BeamParticles)
+		{
+			//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("2222222222")), true, FVector2D(1, 1));
+			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
+				World,
+				BeamParticles,
+				muzzleLocation,
+				FRotator::ZeroRotator,
+				true
+			);
+			if (Beam)
+			{
+				Beam->SetVectorParameter(FName("Target"), BeamEnd);
+			}
+		}
+	}
+}
 
 //void URenderTargetProcess::CopyToMainCanvas()
 //{
@@ -194,3 +267,4 @@ void URenderTargetProcess::SetBrushOpacity(float op)
 //	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Purple, FString::Printf(TEXT("2222")), true, FVector2D(1, 1));
 //	if (!SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(true);
 //}
+

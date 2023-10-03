@@ -35,6 +35,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="MySettings|LMH")
 	class UTextureRenderTarget2D* PaintingRenderTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="MySettings|LMH")
+	class UTextureRenderTarget2D* PaintingRenderTarget2;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MySettings|LMH")
 	class UMaterialInstanceDynamic* BrushMaterialInstance;
@@ -42,7 +45,7 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable,Category = "MySettings|LMH")
-	void DrawCar(const FHitResult& hitInfo);
+	void DrawCar(const FHitResult& hitInfo, FVector muzzleLocation);
 
 	UFUNCTION(BlueprintCallable,Category = "MySettings|LMH")
 	void DrawSize(float drawSize);
@@ -59,5 +62,18 @@ public:
 
 	int setnum= 60;
 	int NSIdx=0;
-	
+
+	UPROPERTY()
+	class UMaterialInstance* MI_Puddle;
+
+	//FVector DecalSize=FVector(1, 0.05, 0.05);
+	FVector DecalSize=FVector(5, 5, 5);
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<class UDecalComponent*> DecalActors;
+
+	UPROPERTY(EditAnywhere, Category = "MySettings|LMH")
+	class UParticleSystem* BeamParticles;
+
+	void PowerWashEffect(FVector point, FVector muzzleLocation);
 };
