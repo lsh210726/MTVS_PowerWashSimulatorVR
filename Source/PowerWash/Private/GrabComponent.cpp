@@ -12,6 +12,7 @@
 #include "MuzzleActor.h"
 #include "WaterGunActor.h"
 #include "Components/WidgetComponent.h"
+#include "wheelWidget.h"
 
 
 
@@ -66,6 +67,8 @@ void UGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 				grabbedObject = nullptr;
 				player->bHasMuzzle = false;
 				player->waterGun->shotRot();
+
+				player->MuzzleChangeSoundPlay();//머즐소리재생
 
 				//놓았을 떄 초기화
 				isRot = false;
@@ -181,7 +184,29 @@ void UGrabComponent::GrabObject()
 					grabbedObject = pickObj;
 					player->bHasMuzzle = true;
 					player->MenuUI->SetHiddenInGame(false);
-					player->MenuUI->SetRelativeLocation(FVector(40, 0, 0));
+					//player->MenuUI->SetRelativeLocation(FVector(40, 0, 0));
+
+					player->MuzzleChangeSoundPlay();//머즐소리재생
+
+
+					FTimerHandle GravityTimerHandle;
+					float GravityTime=0.1f;
+
+					GetWorld()->GetTimerManager().SetTimer(GravityTimerHandle, FTimerDelegate::CreateLambda([&]()
+						{
+							// 코드 구현
+							player->MenuUI->SetRelativeLocation(FVector(40, 0, 0));
+
+							// TimerHandle 초기화
+							GetWorld()->GetTimerManager().ClearTimer(GravityTimerHandle);
+						}), GravityTime, false);	// 반복하려면 false를 true로 변경
+
+					//player->MenuUI->playAnima
+
+					//UWheelWidget* wui = Cast<UWheelWidget>(player->WheelUI);
+					//wui->isShow = true;
+
+					player->isWheelMenuHidden = false;
 
 					//잡았을 때 손 회전값 계산
 					isRot = true;
@@ -248,8 +273,25 @@ void UGrabComponent::ReleaseObject()
 						grabbedObject->Attached(grabbedObject->waterGun->meshComp, "Muzzle");
 						grabbedObject = nullptr;
 						player->bHasMuzzle = false;
-						player->MenuUI->SetHiddenInGame(true);
-						player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+						//player->MenuUI->SetHiddenInGame(true);
+						//player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+
+						player->MuzzleChangeSoundPlay();//머즐소리재생
+
+
+						player->isWheelMenuHidden = true;
+
+						FTimerHandle GravityTimerHandle;
+						float GravityTime = 0.5f;
+
+						GetWorld()->GetTimerManager().SetTimer(GravityTimerHandle, FTimerDelegate::CreateLambda([&]()
+							{
+								// 코드 구현
+								player->MenuUI->SetHiddenInGame(true);
+								player->MenuUI->SetRelativeLocation(FVector(40, 0, 100));
+								// TimerHandle 초기화
+								GetWorld()->GetTimerManager().ClearTimer(GravityTimerHandle);
+							}), GravityTime, false);	// 반복하려면 false를 true로 변경
 
 						//놓았을 떄 초기화
 						isRot = false;
@@ -280,5 +322,12 @@ void UGrabComponent::UIHider()
 {
 	player->WheelUI->SetHiddenInGame(true);//휠위젯을 가린다
 	UE_LOG(LogTemp, Warning, TEXT("UI Hide"));
+}
+
+void UGrabComponent::changeHiddenWheelUI()
+{
+//	if (player->WheelUI != nullptr && player->WheelUI->bHiddenInGame) player->WheelUI->SetHiddenInGame(false);//if hidden in game is true
+//	else if(player->WheelUI != nullptr && !player->WheelUI->bHiddenInGame) player->WheelUI->SetHiddenInGame(true);
+	
 }
 

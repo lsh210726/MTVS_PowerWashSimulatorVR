@@ -29,6 +29,7 @@
 #include "Containers/UnrealString.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "wheelWidget.h"
 
 
 
@@ -338,7 +339,18 @@ void AVRCharacter::OnComponentBeginOverlapLeft(UPrimitiveComponent* OverlappedCo
 {
 	if (WheelUI != nullptr&&bHasMuzzle)
 	{
-		WheelUI->SetHiddenInGame(false);
+		//WheelUI->SetHiddenInGame(false);
+		//UWheelWidget* WheelWidget = Cast<UWheelWidget>(WheelUI);
+		//if (WheelWidget->PopUpAni!=nullptr)
+		//{
+		//	WheelWidget->PlayAnimation(WheelWidget->PopUpAni);
+		//}
+		//FTimerHandle timerHandle;
+		//GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &AVRCharacter::wheelUIchangeHidden,0.0f,false);//0초 뒤에 히든인게임 false
+
+
+		//UWheelWidget* WheelWidget = Cast<UWheelWidget>(WheelUI);
+		//if (WheelWidget!=nullptr) WheelWidget->changeHidden(false);//if changeHidden is false, widget animation play
 	}
 	UE_LOG(LogTemp, Warning, TEXT("UI Show"));
 
@@ -385,6 +397,11 @@ void AVRCharacter::mainMenuOnOff_Implementation()
 	//}
 	//메인 메뉴 안 들어가고 바로 빌드로 들어가도록
 	if (waterGun != nullptr) waterGun->grabReleseGun();
+}
+
+void AVRCharacter::MuzzleChangeSoundPlay_Implementation()
+{
+
 }
 
 void AVRCharacter::RightTriggerDown()
@@ -477,4 +494,24 @@ void AVRCharacter::RightBTouch()
 {
 	rightLog->SetText(FText::FromString("Right B Button Touched!"));
 
+}
+
+void AVRCharacter::wheelUIchangeHidden()
+{
+	if(WheelUI!=nullptr && WheelUI->bHiddenInGame) WheelUI->SetHiddenInGame(false);
+	else
+	{
+		WheelUI->SetHiddenInGame(true);//reverse widget animation play
+
+		FTimerHandle GravityTimerHandle;
+		float GravityTime = 0.5f;
+
+		GetWorld()->GetTimerManager().SetTimer(GravityTimerHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				// 코드 구현
+				WheelUI->SetHiddenInGame(true);
+				// TimerHandle 초기화
+				GetWorld()->GetTimerManager().ClearTimer(GravityTimerHandle);
+			}), GravityTime, false);//wait .5 second and hidden in game
+	}
 }

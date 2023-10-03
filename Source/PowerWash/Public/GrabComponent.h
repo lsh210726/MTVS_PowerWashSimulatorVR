@@ -52,4 +52,5 @@ private:
 	void ReleaseObject();
 	void leftHandMove(const struct FInputActionValue& value);
 	void UIHider();
+	void changeHiddenWheelUI();
 };

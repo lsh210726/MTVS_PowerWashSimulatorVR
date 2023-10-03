@@ -124,6 +124,8 @@ void AWaterGunActor::Shoot()
 		//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleRotation.Pitch, muzzleRotation.Yaw, muzzleRotation.Roll);
 
 		WideShot(shotAngle);
+
+		shotSoundPlay();
 	}
 }
 
@@ -240,5 +242,10 @@ void AWaterGunActor::grabReleseGun()
 		UE_LOG(LogTemp, Warning, TEXT("grabReleseGunEventOn"));
 
 	}
+}
+
+void AWaterGunActor::shotSoundPlay_Implementation()
+{
+
 }
 
