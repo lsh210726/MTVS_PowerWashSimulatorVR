@@ -68,9 +68,9 @@ public:
 	void ChangeAngle();
 	void shotRot();
 	void grabReleseGun();
-W
+
 	//¿ÃπŒ«œ √ﬂ∞°
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	class UShootComponent* shootComp;
 
 	UFUNCTION(BlueprintNativeEvent)

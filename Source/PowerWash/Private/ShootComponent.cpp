@@ -109,14 +109,14 @@ void UShootComponent::OnNiagaraEffect()
 		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, TEXT("33333"));
 		// Parameters can be set like this (see documentation for further info) - the names and type must match the user exposed parameter in the Niagara System
 		//NiagaraComp->SetNiagaraVariableFloat(FString("StrengthCoef"), CoefStrength);
-	if (SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(false); 
+	//if (SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(false); 
 
 	
 }
 
 void UShootComponent::OffNiagaraEffect()
 {
-	if (!SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(true);
+	//if (!SprayCueComponent->bIsPaused) SprayCueComponent->SetPaused(true);
 	if (SteamComp) SteamComp->SetVisibility(false);
 
 
