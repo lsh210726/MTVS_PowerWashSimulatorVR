@@ -150,7 +150,7 @@ void AWaterGunActor::WideShot(float degree)
 void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 {
 	FHitResult hitInfo;
-	DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
+	//DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
 	//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleFwdVec.X, muzzleFwdVec.Y, muzzleFwdVec.Z);
 
 	if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, ECC_Visibility))
