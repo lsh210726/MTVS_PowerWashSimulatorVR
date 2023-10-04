@@ -54,7 +54,7 @@ void UShootComponent::BeginPlay()
 	SteamComp = UGameplayStatics::SpawnEmitterAtLocation(
 		GetWorld(),
 		SteamParticles,
-		FVector(0),
+		FVector(0,0,-100),
 		FRotator::ZeroRotator,
 		true
 	);

@@ -96,7 +96,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|MoveMent")
 	bool bIsTesting = true;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "MySettings|MoveMent")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings|MoveMent")
 	bool bHasGun = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MySettings|VRInteraction")
