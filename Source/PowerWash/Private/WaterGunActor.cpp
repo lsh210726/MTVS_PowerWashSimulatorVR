@@ -34,20 +34,12 @@ AWaterGunActor::AWaterGunActor()
 	meshComp->SetupAttachment(RootComponent);
 	meshComp->SetRelativeLocation(FVector(0, -24, -5));
 	meshComp->SetSimulatePhysics(false);
-
-	//muzzleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Muzzle Mesh"));
-	//muzzleMesh->SetupAttachment(meshComp);
-	//muzzleMesh->SetSimulatePhysics(false);
-	//arrowComp = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Comp"));
-	//arrowComp->SetupAttachment(muzzleMesh);
-	//arrowComp->SetSimulatePhysics(false);
 }
 
 // Called when the game starts or when spawned
 void AWaterGunActor::BeginPlay()
 {
 	Super::BeginPlay();
-	//owner∏¶ º≥¡§«ÿ¡‡æﬂ «—¥Ÿ
 	GetWorld()->GetTimerManager().SetTimerForNextTick([this]()
 		{
 
@@ -55,32 +47,19 @@ void AWaterGunActor::BeginPlay()
 
 	player = Cast<AVRCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
-	//¿ÃπŒ«œ √ﬂ∞°
+	//Ïù¥ÎØºÌïò Ï∂îÍ∞Ä
 	shootComp = player->GetComponentByClass<UShootComponent>();
 
-	//if (player)
-	//{
-	//	if (player->rightHand)
-	//	{
-	//		AttachToComponent(player->rightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
-	//		player->bHasGun = true;
-	//		player->waterGun = this;
-	//		//if(player->waterGun != nullptr) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,*player->waterGun->GetName());
 
-	//	}
-	//}
 	player->waterGun = this;
 	grabReleseGun();
 
-	//currRot = muzzleMesh->GetRelativeRotation();
-
-	//StartRotation = muzzleMesh->GetRelativeRotation();
 	TargetRotation = StartRotation;
 
-	// »∏¿¸ Ω√∞£ º≥¡§
-	RotationTime = 2.0f; // øπ: 2√  µøæ» »∏¿¸
+	// ÌöåÏ†Ñ ÏãúÍ∞Ñ ÏÑ§Ï†ï
+	RotationTime = 2.0f; // Ïòà: 2Ï¥à ÎèôÏïà ÌöåÏ†Ñ
 
-	// Ω√¿€ Ω√∞£ ¿˙¿Â
+	// ÏãúÏûë ÏãúÍ∞Ñ Ï†ÄÏû•
 	StartTime = GetWorld()->GetTimeSeconds();
 
 	UE_LOG(LogTemp, Warning, TEXT("StartRotation : %f,%f,%f"), StartRotation.Roll, StartRotation.Pitch, StartRotation.Yaw);
@@ -92,44 +71,23 @@ void AWaterGunActor::BeginPlay()
 void AWaterGunActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-
-	//if (muzzleMesh)
-	//{
-	//	StartRotation = muzzleMesh->GetRelativeRotation();
-	//	if (StartRotation.Roll <= TargetRotation.Roll)
-	//	{
-	//		auto changeRot = FRotator(StartRotation.Pitch, StartRotation.Yaw, StartRotation.Roll + 1.0f);
-	//		UE_LOG(LogTemp, Warning, TEXT("StartRotation : %f,%f,%f & TargetRotation : %f,%f,%f &changeRot : %f,%f,%f"), StartRotation.Roll, StartRotation.Pitch, StartRotation.Yaw, TargetRotation.Roll, TargetRotation.Pitch, TargetRotation.Yaw, changeRot.Roll, changeRot.Pitch, changeRot.Yaw);
-	//		muzzleMesh->SetRelativeRotation(changeRot);
-	//	}
-
-	//	muzzleRotation = muzzleMesh->GetComponentRotation();//meshComp->GetSocketRotation(TEXT("Muzzle"));
-
-	//}
-
 }
 
 void AWaterGunActor::Shoot()
 {
 	FHitResult hitInfo;
-	if (player->bHasGun && /*meshComp->DoesSocketExist(TEXT("Muzzle"))&&*/ MuzzleActor!=nullptr)
+	if (player->bHasGun && MuzzleActor!=nullptr)
 	{
 		muzzleLocation = meshComp->GetSocketLocation(TEXT("Muzzle"));
-		muzzleRotation = /*muzzleMesh->GetComponentRotation();*/meshComp->GetSocketRotation(TEXT("Muzzle"));
+		muzzleRotation = meshComp->GetSocketRotation(TEXT("Muzzle"));
 		USkeletalMeshSocket const* mySocket = nullptr;
 		mySocket = meshComp->GetSocketByName(TEXT("Muzzle"));
-		//muzzleLocation = MuzzleActor->GetActorLocation();
-		//muzzleRotation = MuzzleActor->meshComp->GetComponentRotation();
-		//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleRotation.Pitch, muzzleRotation.Yaw, muzzleRotation.Roll);
-
 		WideShot(shotAngle);
-
 		shotSoundPlay();
 	}
 }
 
-void AWaterGunActor::WideShot(float degree)
+void AWaterGunActor::WideShot(float degree)//Î¨ºÏ§ÑÍ∏∞ ÎÑìÍ≤å ÏèòÎäî Í∞ÅÎèÑ Î≥ÄÍ≤Ω
 {
 	FVector muzzleFwdVec;
 	if (!horShot) muzzleRotation.Pitch -= degree / 2;
@@ -147,11 +105,10 @@ void AWaterGunActor::WideShot(float degree)
 	}
 }
 
-void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
+void AWaterGunActor::ShootWater(FVector muzzleFwdVec)//Î¨º ÏèòÍ∏∞
 {
 	FHitResult hitInfo;
-	//DrawDebugLine(GetWorld(), muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, FColor::White, false, 0.2f, 0, 1.0f);
-	//UE_LOG(LogTemp, Warning, TEXT(" % f, % f, % f"), muzzleFwdVec.X, muzzleFwdVec.Y, muzzleFwdVec.Z);
+
 
 	if (GetWorld()->LineTraceSingleByChannel(hitInfo, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, ECC_Visibility))
 	{
@@ -163,7 +120,6 @@ void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 
 		if (hitInfo.GetComponent()->LineTraceComponent(result2, muzzleLocation, muzzleLocation + muzzleFwdVec * shootPower, params))
 		{
-			//DrawDebugSphere(GetWorld(), result2.ImpactPoint, 5, 8, FColor::White, false, 0.2f, 0, 0.3f);
 			auto HitActor = Cast<AActor>(result2.GetActor());
 			 // (result2.ImpactPoint);
 			if(shootComp) shootComp->SteamComp->SetWorldLocation(result2.ImpactPoint);
@@ -172,27 +128,11 @@ void AWaterGunActor::ShootWater(FVector muzzleFwdVec)
 			URenderTargetProcess* renderComp = HitActor->GetComponentByClass<URenderTargetProcess>();
 			if (renderComp) renderComp->DrawCar(result2,muzzleLocation);
 
-			/*FVector2D UV;
-			bool hit = UGameplayStatics::FindCollisionUV(result2, 0, UV);
-			UE_LOG(LogTemp, Warning, TEXT("UV Location: %s"), hit ? *FString("True") : *FString("False"));*/
-
-			//UPrimitiveComponent* HitPrimComp = hitInfo.Component.Get();
-			//if (HitPrimComp)
-			//{
-			//	UBodySetup* BodySetup = HitPrimComp->GetBodySetup();
-			//	if (BodySetup)
-			//	{
-			//		const FVector LocalHitPos = HitPrimComp->GetComponentToWorld().InverseTransformPosition(hitInfo.Location);
-			//		UE_LOG(LogTemp, Warning, TEXT("LocalHit Location: %.3f, %.3f, %.3f"), LocalHitPos.X, LocalHitPos.Y, LocalHitPos.Z);
-
-
-			//		bool bSuccess = BodySetup->CalcUVAtLocation(LocalHitPos, hitInfo.FaceIndex, 0, UV);
-			//		//UE_LOG(LogTemp, Warning, TEXT("UV Location: %s"), bSuccess ? *FString("True") : *FString("False"));
 		}
 	}
 }
 
-void AWaterGunActor::ChangeAngle()
+void AWaterGunActor::ChangeAngle()//Î¨ºÏ§ÑÍ∏∞Î•º ÏÑ∏Î°úÎ°ú Ïè†ÏßÄ Í∞ÄÎ°úÎ°ú Ïè†ÏßÄ
 {
 	if (shotAngle < 40) shotAngle += 10;
 	else shotAngle = 0;
@@ -204,19 +144,9 @@ void AWaterGunActor::shotRot()
 {
 	if (horShot)horShot = false;
 	else horShot = true;
-	/*currRot = muzzleMesh->GetComponentRotation();*/
-	//if (currRot.Pitch > 88) currRot.Pitch += 90;
-	//if (oneTime)
-	//{
-
-	//	TargetRotation = FRotator(StartRotation.Pitch, StartRotation.Yaw, StartRotation.Roll + 90.f);
-	//	UE_LOG(LogTemp, Warning, TEXT("oneTIme"));
-	//	oneTime = false;
-	//}
-
 }
 
-void AWaterGunActor::grabReleseGun()
+void AWaterGunActor::grabReleseGun()//ÌîåÎ†àÏù¥Ïñ¥ ÏÜê ÏÜåÏºìÏóê Ï¥ù Î∂ôÏù¥Í∏∞
 {
 	if (player)
 	{
@@ -226,8 +156,7 @@ void AWaterGunActor::grabReleseGun()
 			{
 				AttachToComponent(player->rightHand, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GrabPoint"));
 				player->bHasGun = true;
-				//player->waterGun = this;
-				//if(player->waterGun != nullptr) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,*player->waterGun->GetName());
+
 				UE_LOG(LogTemp, Warning, TEXT("grabGun"));
 	
 			}
